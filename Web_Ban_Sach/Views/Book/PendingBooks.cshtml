@@ -1,0 +1,76 @@
+﻿@model List<Web_Ban_Sach.Models.Book>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Danh sách sách chờ thêm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-3">Danh sách sách chờ thêm</h2>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">@TempData["Message"]</div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <p>Hiện chưa có sách nào trong danh sách chờ.</p>
+        }
+        else
+        {
+            <table class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Tên sách</th>
+                        <th>Ngày xuất bản</th>
+                        <th>Giá</th>
+                        <th>Mô tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@Model[i].Name</td>
+                            <td>@Model[i].PublicationDate.ToString("dd/MM/yyyy")</td>
+                            <td>@Model[i].Price</td>
+                            <td>@Model[i].Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            using (Html.BeginForm("PendingBooks", "Book", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary">
+                    Thêm tất cả vào hệ thống
+                </button>
+            }
+        }
+
+        <hr />
+        <a href="@Url.Action("Create", "Book")" class="btn btn-secondary mt-2">
+            Tiếp tục thêm sách (thêm vào danh sách chờ)
+        </a>
+        <a href="@Url.Action("Index", "Book")" class="btn btn-link mt-2">
+            Về danh sách sách (Index)
+        </a>
+    </div>
+</body>
+</html>

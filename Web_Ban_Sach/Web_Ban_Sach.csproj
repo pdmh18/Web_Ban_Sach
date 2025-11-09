@@ -100,6 +100,9 @@
       <DependentUpon>QuanLySach.mdf</DependentUpon>
     </Content>
     <Content Include="Global.asax" />
+    <Content Include="Images\anhmacdinh.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -109,7 +112,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\BookDateValidator.cs" />
     <Compile Include="Models\BookDto.cs" />
+    <Compile Include="Models\BookImageValidator.cs" />
     <Compile Include="Models\Books.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -120,6 +125,7 @@
     <Content Include="Views\Book\Create.cshtml" />
     <Content Include="Views\Book\Update.cshtml" />
     <Content Include="Views\Book\Delete.cshtml" />
+    <Content Include="Views\Book\PendingBooks.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -127,9 +133,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

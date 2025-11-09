@@ -1,4 +1,7 @@
 ﻿@model Web_Ban_Sach.Models.BookDto
+@using System.Linq
+@using System.Web.Mvc
+
 @{
     Layout = null;
 }
@@ -76,6 +79,7 @@
         {
             @Html.AntiForgeryToken()
 
+
             <div class="form-group">
                 @Html.LabelFor(m => m.Name, "Tên sách")
                 @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Nhập tên sách..." })
@@ -86,9 +90,20 @@
                 <label>Ngày xuất bản</label>
                 <div class="date-inputs">
                     @Html.TextBoxFor(m => m.Day, new { @class = "form-control", placeholder = "Ngày", type = "number", min = "1", max = "31" })
-                    @Html.TextBoxFor(m => m.Month, new { @class = "form-control", placeholder = "Tháng", type = "number", min = "1", max = "12" })
+                    @Html.DropDownListFor(
+                                m => m.Month,
+                                Enumerable.Range(1, 12).Select(i => new SelectListItem
+                                {
+                                    Value = i.ToString(),
+                                    Text = i.ToString()
+                                }),
+                                "Tháng", 
+                                new { @class = "form-control" }
+                            )                    
                     @Html.TextBoxFor(m => m.Year, new { @class = "form-control", placeholder = "Năm", type = "number", min = "1900", max = "2100" })
                 </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
             </div>
 
             <div class="form-group">
@@ -99,17 +114,19 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.Price, "Giá bán (VNĐ)")
                 @Html.TextBoxFor(m => m.Price, new { @class = "form-control", placeholder = "Nhập giá...", type = "number", min = "0" })
+                @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group">
                 <label>Ảnh bìa</label>
                 <input type="file" name="ImageFile" class="form-control" />
+                @Html.ValidationMessageFor(m => m.ImageFile, "", new { @class = "text-danger" })
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Thêm sách</button>
         }
 
-        <a href="@Url.Action("Index", "Book")" class="back-link text-decoration-none text-secondary">
+        <a href="@Url.Action("PendingBooks", "Book")" class="back-link text-decoration-none text-secondary">
             Quay lại danh sách
         </a>
     </div>

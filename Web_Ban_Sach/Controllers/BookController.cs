@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -13,11 +14,25 @@ namespace Web_Ban_Sach.Controllers
         private Books db = new Books();
         public ActionResult Index()
         {
-            List<Book> books = db.Book.ToList();
+            List<Book> books = db.Book.OrderByDescending(b => b.Id).ToList();
             return View(books);
         }
 
         // them
+        private const string PendingBooksSessionKey = "PendingBooks";
+
+        private List<Book> GetPendingBooks()
+        {
+            var list = Session[PendingBooksSessionKey] as List<Book>;
+            if (list == null)
+            {
+                list = new List<Book>();
+                Session[PendingBooksSessionKey] = list;
+            }
+            return list;
+        }
+
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -28,78 +43,69 @@ namespace Web_Ban_Sach.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(BookDto model)
         {
-            if(!ModelState.IsValid)
-            {   
+            if (!ModelState.IsValid)
                 return View(model);
-            }
-            if (model.PublicationDate == null)
+
+            string imagePath;
+            try
             {
-                ModelState.AddModelError("", "Ngày xuất bản không hợp lệ!");
+                imagePath = model.SaveImage(Server.MapPath("~/"));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("","Lỗi lưu ảnh" + ex.Message);
                 return View(model);
-            }
-            string savedRelativePath = null;
-            if (model.ImageFile != null && model.ImageFile.ContentLength > 0)
-            {
-                // kiểm tra extension (chỉ cho phép ảnh)
-                var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-                var ext = Path.GetExtension(model.ImageFile.FileName)?.ToLower();
-                if (ext == null || Array.IndexOf(allowed, ext) < 0)
-                {
-                    ModelState.AddModelError("ImageFile", "Chỉ cho phép file ảnh (.jpg, .png, .jpeg, .gif).");
-                    return View(model);
-                }
-
-                var fileName = Path.GetFileNameWithoutExtension(model.ImageFile.FileName);
-                var safeFileName = fileName.Length > 40 ? fileName.Substring(0, 40) : fileName; // tránh tên quá dài
-                var unique = safeFileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ext;
-
-                var folderPath = Server.MapPath("~/Images/");
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-
-                var fullPath = Path.Combine(folderPath, unique);
-                model.ImageFile.SaveAs(fullPath);
-
-                savedRelativePath = "~/Images/" + unique;
             }
 
             var book = new Book
             {
                 Name = model.Name,
-                PublicationDate = model.PublicationDate.Value, 
+                PublicationDate = (DateTime)model.PublicationDate,
                 Description = model.Description,
-                Price = model.Price,
-                // nếu DB cột CoverImageUrl không cho NULL, đặt giá trị mặc định:
-                CoverImageUrl = savedRelativePath ?? "~/Images/default.jpg",
+                Price = (double)model.Price,
+                CoverImageUrl = imagePath,
                 CreatedAt = DateTime.Now
             };
 
+            var pending = GetPendingBooks();
+            pending.Add(book);
 
-            try
-            {
-                db.Book.Add(book);
-                db.SaveChanges();
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException vex)
-            {
-                foreach (var eve in vex.EntityValidationErrors)
-                {
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        ModelState.AddModelError(ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                var inner = ex.InnerException?.InnerException?.Message ?? ex.Message;
-                ModelState.AddModelError("", "Lỗi khi lưu dữ liệu: " + inner);
-                return View(model);
-            }
-            return RedirectToAction("Index");
-
+            TempData["Message"] = "Đã thêm sách vào danh sách chờ.";
+            return RedirectToAction("PendingBooks");
         }
+
+        // list them sach
+        public ActionResult PendingBooks()
+        {
+            var pending = GetPendingBooks();
+            return View(pending);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PendingBooks(List<Book> booksDummy = null)
+        {
+            var pending = Session[PendingBooksSessionKey] as List<Book>;
+
+            if (pending == null || !pending.Any())
+            {
+                TempData["Error"] = "Không có sách nào trong danh sách chờ.";
+                return RedirectToAction("PendingBooks");
+            }
+
+            foreach (var b in pending)
+            {
+                db.Book.Add(b);
+            }
+
+            db.SaveChanges();
+            Session[PendingBooksSessionKey] = null;
+
+            TempData["Message"] = "Đã thêm tất cả sách vào hệ thống.";
+            return RedirectToAction("Index");
+        }
+
+
+
 
         // update
         public ActionResult Update(int id) // tìm sachhs trong bảng db

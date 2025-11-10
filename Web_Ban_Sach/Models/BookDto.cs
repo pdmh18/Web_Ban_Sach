@@ -26,6 +26,8 @@ namespace Web_Ban_Sach.Models
         [Range(1900, 2100, ErrorMessage = "Năm không hợp lệ")]
         public int? Year { get; set; } // nam xuat ban
 
+        [Required(ErrorMessage = "Vui lòng nhập ngày tháng năm")]
+        [StringLength(200)]
         public DateTime? PublicationDate
         {
             get
@@ -48,6 +50,7 @@ namespace Web_Ban_Sach.Models
 
         [Required(ErrorMessage = "Vui lòng nhập giá sách")]
         [Range(0, double.MaxValue, ErrorMessage = "Giá phải >= 0")]
+
         public double? Price { get; set; } // gia sach
 
 
@@ -63,10 +66,11 @@ namespace Web_Ban_Sach.Models
                 return "~/Images/anhmacdinh.jpg";
             }
 
-            var fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
-            var ext = Path.GetExtension(ImageFile.FileName)?.ToLower();
-            var unique = $"{fileName}_{DateTime.Now:yyyyMMddHHmmss}{ext}";
+            var fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);// bỏ đuôi
+            var ext = Path.GetExtension(ImageFile.FileName)?.ToLower();// lấy đuôi
+            var unique = $"{fileName}_{DateTime.Now:yyyyMMddHHmmss}{ext}";// laays yyyyMMddHHmmss để tránh trùng tên
 
+            // tạo đg dẫn lưu file
             var folderPath = Path.Combine(serverPath, "Images");
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);

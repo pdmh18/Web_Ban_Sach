@@ -10,23 +10,40 @@ namespace Web_Ban_Sach.Models
         [Key]
         public int Id { get; set; } // ma sach
 
+
+
         [Required(ErrorMessage ="Vui lòng nhập tên sách: ")]
         [StringLength(200)]
         public string Name { get; set; } // ten sach
+
+
+
 
         [DataType(DataType.Date)]
         [Display(Name ="Ngày xuất bản")]
         public DateTime PublicationDate { get; set; } // ngay xuat ban
 
+
+
+
         [Display(Name = "Mô tả")]
         public string Description { get; set; } // mo ta sach
 
+
+
         [Required(ErrorMessage = "Vui lòng nhập giá sách")]
         [Range(0, double.MaxValue, ErrorMessage = "Giá phải >= 0")]
-        public double Price { get; set; } // gia sach
+        [Display(Name = "Giá")]
+        [DisplayFormat(DataFormatString = "{0:N0} đ", ApplyFormatInEditMode = false)]
+        public double Price { get; set; }
+
+
+
 
         [Display(Name = "Ảnh bìa")]
         public string CoverImageUrl { get; set; } // anh bia sach
+
+
 
         [DataType(DataType.Date)]
         [Display(Name = "Ngày thêm vào hệ thống")]

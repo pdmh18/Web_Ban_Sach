@@ -90,6 +90,8 @@
                 <label>Ngày xuất bản</label>
                 <div class="date-inputs">
                     @Html.TextBoxFor(m => m.Day, new { @class = "form-control", placeholder = "Ngày", type = "number", min = "1", max = "31" })
+                    @Html.ValidationMessageFor(m => m.Day, "", new { @class = "text-danger" })
+
                     @Html.DropDownListFor(
                                 m => m.Month,
                                 Enumerable.Range(1, 12).Select(i => new SelectListItem
@@ -97,11 +99,12 @@
                                     Value = i.ToString(),
                                     Text = i.ToString()
                                 }),
-                                "Tháng", 
+                                "Tháng",
                                 new { @class = "form-control" }
-                            )                    
+                            )
                     @Html.TextBoxFor(m => m.Year, new { @class = "form-control", placeholder = "Năm", type = "number", min = "1900", max = "2100" })
                 </div>
+                @Html.ValidationMessageFor(m => m.PublicationDate, "", new { @class = "text-danger" })
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             </div>

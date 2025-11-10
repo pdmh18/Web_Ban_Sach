@@ -12,22 +12,51 @@ namespace Web_Ban_Sach.Controllers
     public class BookController : Controller
     {
         private Books db = new Books();
-        public ActionResult Index()
+        public ActionResult Index(string SortBy,int page = 1, string search = "")
         {
+            
             List<Book> books = db.Book.OrderByDescending(b => b.Id).ToList();
+            switch (SortBy)
+            {
+                case "Name":
+                    books = books.OrderBy(e => e.Name).ToList();
+                    break;
+                case "Price":
+                    books = books.OrderBy(e => e.Price).ToList();
+                    break;
+                case "PublicationDate":
+                    books = books.OrderBy(e => e.PublicationDate).ToList();
+                    break;
+                default:
+                    break;
+
+            }
+
+            int pageSize = 3;
+            int totalBooks = books.Count;
+            int totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+            books = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPage = totalPages;
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                books = db.Book.Where(row => row.Name.Contains(search)).ToList();
+            }
+            ViewBag.Search = search;
             return View(books);
         }
 
         // them
-        private const string PendingBooksSessionKey = "PendingBooks";
-
+        private const string PendingBooksSessionKey = "PendingBooks";// dùng key để truy cạp sesioon, thay viết viết PenPendingBooks thì gom thành 1 PendingBooksSessionKey
+        // kho tạm để lưu sách chờ thêm vào db
         private List<Book> GetPendingBooks()
         {
-            var list = Session[PendingBooksSessionKey] as List<Book>;
+            var list = Session[PendingBooksSessionKey] as List<Book>;// lấy dưới dạng PendingBooksSessionKey chuyển qua dạng  List<Book>
             if (list == null)
             {
                 list = new List<Book>();
-                Session[PendingBooksSessionKey] = list;
+                Session[PendingBooksSessionKey] = list;// gán lại vào session
             }
             return list;
         }
@@ -70,12 +99,11 @@ namespace Web_Ban_Sach.Controllers
             var pending = GetPendingBooks();
             pending.Add(book);
 
-            TempData["Message"] = "Đã thêm sách vào danh sách chờ.";
             return RedirectToAction("PendingBooks");
         }
 
         // list them sach
-        public ActionResult PendingBooks()
+        public ActionResult PendingBooks()// hiển thị all ds chờ thêm
         {
             var pending = GetPendingBooks();
             return View(pending);
@@ -88,7 +116,6 @@ namespace Web_Ban_Sach.Controllers
 
             if (pending == null || !pending.Any())
             {
-                TempData["Error"] = "Không có sách nào trong danh sách chờ.";
                 return RedirectToAction("PendingBooks");
             }
 
@@ -100,7 +127,6 @@ namespace Web_Ban_Sach.Controllers
             db.SaveChanges();
             Session[PendingBooksSessionKey] = null;
 
-            TempData["Message"] = "Đã thêm tất cả sách vào hệ thống.";
             return RedirectToAction("Index");
         }
 
@@ -108,70 +134,79 @@ namespace Web_Ban_Sach.Controllers
 
 
         // update
-        public ActionResult Update(int id) // tìm sachhs trong bảng db
+        [HttpGet]
+        public ActionResult Update(int id)
         {
-            Book existingBook = db.Book.FirstOrDefault(b => b.Id == id);
-            if (existingBook == null)
-            {
-                return HttpNotFound();
-            }
+            var b = db.Book.FirstOrDefault(x => x.Id == id);
+            if (b == null) return HttpNotFound();
 
-            return View(existingBook);
+            var dto = new BookDto
+            {
+                Name = b.Name,
+                Day = b.PublicationDate.Day,
+                Month = b.PublicationDate.Month,
+                Year = b.PublicationDate.Year,
+                Description = b.Description,
+                Price = b.Price
+            };
+
+            ViewBag.BookId = id; // giữ id riêng
+            ViewBag.ExistingCover = b.CoverImageUrl;  // ảnh hiện tại để fallback
+            return View(dto);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Update(Book model, HttpPostedFileBase ImageFile)
+        public ActionResult Update(int id, BookDto model, string existingCover)
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.BookId = id;
+                ViewBag.ExistingCover = existingCover;
                 return View(model);
             }
 
-            Book existingBook = db.Book.FirstOrDefault(b => b.Id == model.Id);
-            if (existingBook == null)
+            var book = db.Book.FirstOrDefault(x => x.Id == id);
+            if (book == null) return HttpNotFound();
+
+            if (model.PublicationDate == null)
             {
-                return HttpNotFound();
+                ModelState.AddModelError("", "Ngày/tháng/năm xuất bản không hợp lệ.");
+                ViewBag.BookId = id;
+                ViewBag.ExistingCover = existingCover;
+                return View(model);
             }
 
-            // Gán dữ liệu mới
-            existingBook.Name = model.Name;
-            existingBook.PublicationDate = model.PublicationDate;
-            existingBook.Price = model.Price;
-            existingBook.Description = model.Description;
-
-            // Nếu người dùng chọn ảnh mới, thì lưu ảnh và cập nhật đường dẫn
-            if (ImageFile != null && ImageFile.ContentLength > 0)
+            string imagePath;
+            try
             {
-                var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-                var ext = Path.GetExtension(ImageFile.FileName)?.ToLower();
-
-                if (ext == null || !allowed.Contains(ext))
-                {
-                    ModelState.AddModelError("ImageFile", "Chỉ cho phép file ảnh (.jpg, .png, .jpeg, .gif)");
-                    return View(model);
-                }
-
-                // Tạo tên file duy nhất
-                var fileName = Path.GetFileNameWithoutExtension(ImageFile.FileName);
-                var safeFileName = fileName.Length > 40 ? fileName.Substring(0, 40) : fileName;
-                var uniqueName = safeFileName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ext;
-
-                var folder = Server.MapPath("~/Images/");
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-
-                var fullPath = Path.Combine(folder, uniqueName);
-                ImageFile.SaveAs(fullPath);
-
-                existingBook.CoverImageUrl = "~/Images/" + uniqueName;
+                if (model.ImageFile != null && model.ImageFile.ContentLength > 0)
+                    imagePath = model.SaveImage(Server.MapPath("~/"));
+                else
+                    imagePath = string.IsNullOrWhiteSpace(existingCover) ? "~/Images/anhmacdinh.jpg" : existingCover;
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi lưu ảnh: " + ex.Message);
+                ViewBag.BookId = id;
+                ViewBag.ExistingCover = existingCover;
+                return View(model);
+            }
+
+            // cập nhật
+            book.Name = model.Name;
+            book.PublicationDate = model.PublicationDate.Value;
+            book.Price = model.Price.GetValueOrDefault();
+            book.Description = model.Description;
+            book.CoverImageUrl = imagePath;
+
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
+
         //delete
-        // GET: Book/Delete/5
         [HttpGet]
         public ActionResult Delete(int? id)
         {
@@ -201,7 +236,7 @@ namespace Web_Ban_Sach.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Lỗi khi xóa sách: " + (ex.InnerException?.Message ?? ex.Message);
+                TempData["Error"] = (ex.InnerException?.Message ?? ex.Message);
                 return RedirectToAction("Index");
             }
         }

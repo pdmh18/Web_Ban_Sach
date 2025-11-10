@@ -13,8 +13,8 @@ namespace Web_Ban_Sach.Models
             if (dto == null)
                 return ValidationResult.Success;
 
-            if (dto.Day <= 0 || dto.Month <= 0 || dto.Year <= 0)
-                return new ValidationResult("Vui lòng nhập đầy đủ ngày/tháng/năm xuất bản.");
+            //if (dto.Day <= 0 || dto.Month <= 0 || dto.Year <= 0)
+            //    return new ValidationResult("Vui lòng nhập đầy đủ ngày/tháng/năm xuất bản.");
 
             try
             {

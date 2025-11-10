@@ -12,7 +12,7 @@ namespace Web_Ban_Sach.Models
 
 
 
-        [Required(ErrorMessage ="Vui lòng nhập tên sách: ")]
+        [Required(ErrorMessage = "Vui lòng nhập tên sách: ")]
         [StringLength(200)]
         public string Name { get; set; } // ten sach
 
@@ -20,7 +20,7 @@ namespace Web_Ban_Sach.Models
 
 
         [DataType(DataType.Date)]
-        [Display(Name ="Ngày xuất bản")]
+        [Display(Name = "Ngày xuất bản")]
         public DateTime PublicationDate { get; set; } // ngay xuat ban
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -12,9 +13,9 @@ namespace Web_Ban_Sach.Controllers
     public class BookController : Controller
     {
         private Books db = new Books();
-        public ActionResult Index(string SortBy,int page = 1, string search = "")
+        public ActionResult Index(string SortBy, int page = 1, string search = "")
         {
-            
+
             List<Book> books = db.Book.OrderByDescending(b => b.Id).ToList();
             switch (SortBy)
             {
@@ -75,6 +76,13 @@ namespace Web_Ban_Sach.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            if (model.PublicationDate == null)
+            {
+                ModelState.AddModelError("", "Ngày/tháng/năm xuất bản không hợp lệ.");
+                return View(model);
+            }
+
+
             string imagePath;
             try
             {
@@ -82,7 +90,7 @@ namespace Web_Ban_Sach.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("","Lỗi lưu ảnh" + ex.Message);
+                ModelState.AddModelError("", "Lỗi lưu ảnh" + ex.Message);
                 return View(model);
             }
 

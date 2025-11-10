@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -26,15 +27,17 @@ namespace Web_Ban_Sach.Models
         [Range(1900, 2100, ErrorMessage = "Năm không hợp lệ")]
         public int? Year { get; set; } // nam xuat ban
 
-        [Required(ErrorMessage = "Vui lòng nhập ngày tháng năm")]
-        [StringLength(200)]
+        [Display(Name = "Ngày xuất bản")]
         public DateTime? PublicationDate
         {
             get
             {
+                if (!Day.HasValue || !Month.HasValue || !Year.HasValue)
+                    return null;
+
                 try
                 {
-                    return new DateTime((int)Year, (int)Month, (int)Day);
+                    return new DateTime(Year.Value, Month.Value, Day.Value);
                 }
                 catch
                 {

@@ -86,52 +86,49 @@
                 },
                 new { @class = "form-select me-2 w-auto", onchange = "this.form.submit();" })
         }
-
-        <table class="table table-bordered table-hover align-middle">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên sách</th>
-                    <th>Ngày xuất bản</th>
-                    <th>Giá</th>
-                    <th>Ảnh bìa</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.Name</td>
-                            <td>@item.PublicationDate.ToString("dd/MM/yyyy")</td>
-                            <td class="text-danger fw-bold">@Html.DisplayFor(_ => item.Price)</td>
-                            <td>
-                                <img src="@Url.Content(item.CoverImageUrl)" class="cover-img" width="120" height="170" alt="Ảnh bìa" />
-                            </td>
-                            <td>
-                                <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-warning btn-sm me-1">
-                                    Sửa
-                                </a>
-                                <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">
-                                    Xóa
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
+      
+    <table class="table table-bordered table-hover align-middle">
+        <thead>
+            <tr>
+                <th><input type="checkbox" /> Chọn</th>
+                <th>ID</th>
+                <th>Tên sách</th>
+                <th>Ngày xuất bản</th>
+                <th>Giá</th>
+                <th>Ảnh bìa</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
                 {
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
-                            Không có sách nào trong danh sách
+                        <td><input type="checkbox" name="selectedBooks" value="@item.Id" /></td> <!-- Checkbox cho mỗi dòng -->
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.PublicationDate.ToString("dd/MM/yyyy")</td>
+                        <td class="text-danger fw-bold">@Html.DisplayFor(_ => item.Price)</td>
+                        <td><img src="@Url.Content(item.CoverImageUrl)" class="cover-img" width="120" height="170" alt="Ảnh bìa" /></td>
+                        <td>
+                            <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-warning btn-sm me-1">Sửa</a>
+                            <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Xóa</a>
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">Không có sách nào trong danh sách</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 @if (ViewBag.CurrentPage == 1)

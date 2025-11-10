@@ -100,9 +100,7 @@
       <DependentUpon>QuanLySach.mdf</DependentUpon>
     </Content>
     <Content Include="Global.asax" />
-    <Content Include="Images\anhmacdinh.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Images\anhmacdinh.jpg" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

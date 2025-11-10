@@ -7,12 +7,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Web_Ban_Sach.Models;
+using System.IO;
 
 namespace Web_Ban_Sach.Controllers
 {
     public class BookController : Controller
     {
         private Books db = new Books();
+
         public ActionResult Index(string SortBy, int page = 1, string search = "")
         {
 
@@ -138,6 +140,23 @@ namespace Web_Ban_Sach.Controllers
             return RedirectToAction("Index");
         }
 
+        // xóa ảnh trogn thư mục
+        private const string DefaultImage = "~/Images/anhmacdinh.jpg";
+        private void XoaImageThuMuc (string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath) || imagePath.Equals(DefaultImage, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Chuyển đổi đường dẫn ảo thành đường dẫn vật lý
+            var physical = Server.MapPath(imagePath);
+
+            // Kiểm tra nếu file tồn tại và xóa
+            if (System.IO.File.Exists(physical))
+            {
+                System.IO.File.Delete(physical);
+            }
+        }
+
 
 
 
@@ -186,13 +205,21 @@ namespace Web_Ban_Sach.Controllers
                 return View(model);
             }
 
-            string imagePath;
             try
             {
                 if (model.ImageFile != null && model.ImageFile.ContentLength > 0)
-                    imagePath = model.SaveImage(Server.MapPath("~/"));
+                {
+                    var oldCover = book.CoverImageUrl; // giữ lại
+                    var newCover = model.SaveImage(Server.MapPath("~/")); // lưu ảnh mới
+
+                    book.CoverImageUrl = newCover; // gán mới
+                    XoaImageThuMuc(oldCover); // xóa cũ
+                }
                 else
-                    imagePath = string.IsNullOrWhiteSpace(existingCover) ? "~/Images/anhmacdinh.jpg" : existingCover;
+                {
+                    if (string.IsNullOrWhiteSpace(book.CoverImageUrl))
+                        book.CoverImageUrl = DefaultImage;
+                }
             }
             catch (Exception ex)
             {
@@ -207,7 +234,6 @@ namespace Web_Ban_Sach.Controllers
             book.PublicationDate = model.PublicationDate.Value;
             book.Price = model.Price.GetValueOrDefault();
             book.Description = model.Description;
-            book.CoverImageUrl = imagePath;
 
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -238,8 +264,10 @@ namespace Web_Ban_Sach.Controllers
 
             try
             {
+                var cover = book.CoverImageUrl;
                 db.Book.Remove(book);
-                db.SaveChanges();
+                db.SaveChanges();          // xóa DB trước cho chắc
+                XoaImageThuMuc(cover); // rồi xóa file ảnh
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

@@ -277,5 +277,58 @@ namespace Web_Ban_Sach.Controllers
             }
         }
 
+        ///////////////////////////////////////////
+        [HttpPost]
+        public ActionResult DeleteSelected(List<int> selectedBooks)
+        {
+            if (selectedBooks != null && selectedBooks.Any())
+            {
+                var booksToDelete = db.Book.Where(b => selectedBooks.Contains(b.Id)).ToList();
+
+                // Lưu ID của các sách bị xóa vào Session
+                List<int> deletedBookIds = booksToDelete.Select(b => b.Id).ToList();
+                Session["DeletedBooks"] = deletedBookIds;
+
+                // Xóa các sách khỏi cơ sở dữ liệu
+                foreach (var book in booksToDelete)
+                {
+                    db.Book.Remove(book); // Xóa sách khỏi cơ sở dữ liệu
+                }
+
+                db.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
+
+                TempData["Message"] = "Sách đã bị xóa. Bạn có thể hoàn tác trong 1 phút.";
+
+                return RedirectToAction("Index"); // Quay lại danh sách sách
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult UndoDelete()
+        {
+            // Lấy danh sách các sách bị xóa từ Session
+            var deletedBookIds = Session["DeletedBooks"] as List<int>;
+
+            if (deletedBookIds != null && deletedBookIds.Any())
+            {
+                // Khôi phục sách từ danh sách ID
+                var booksToRestore = db.Book.Where(b => deletedBookIds.Contains(b.Id)).ToList();
+
+                foreach (var book in booksToRestore)
+                {
+                    db.Book.Add(book); // Thêm sách vào cơ sở dữ liệu để phục hồi
+                }
+
+                db.SaveChanges();
+            }
+            Session["DeletedBooks"] = null;
+
+            TempData["Message"] = "Sách đã được phục hồi.";
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

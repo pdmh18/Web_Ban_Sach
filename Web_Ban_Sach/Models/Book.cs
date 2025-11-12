@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Web;
-using System.ComponentModel.DataAnnotations;
 namespace Web_Ban_Sach.Models
 {
     public class Book
@@ -48,5 +50,25 @@ namespace Web_Ban_Sach.Models
         [DataType(DataType.Date)]
         [Display(Name = "Ngày thêm vào hệ thống")]
         public DateTime CreatedAt { get; set; } // ngay them sach vao he thong
+
+
+
+        [Display(Name = "Thể loại")]
+        public int genreId { get; set; }
+        [ForeignKey(nameof(genreId))]
+        public virtual Genre Genre { get; set; }
+
+
+
+        [Display(Name = "Nhà cung cấp")]
+        public int supplierId { get; set; }
+        [ForeignKey(nameof(supplierId))]
+        public virtual Supplier Supplier { get; set; }
+
+
+        [Display(Name = "Phiên bản")]
+        public int? EditorId { get; set; }
+        [ForeignKey(nameof(EditorId))]
+        public virtual Editor Editor { get; set; }
     }
 }

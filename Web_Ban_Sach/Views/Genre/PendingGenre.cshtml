@@ -1,0 +1,122 @@
+﻿@model List<Web_Ban_Sach.Models.Genre>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh Sách Thể Loại</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        h2 {
+            font-weight: 600;
+            color: #0d6efd;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: none;
+        }
+
+        table th {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f5ff;
+            transition: 0.3s;
+        }
+
+        .alert {
+            border-radius: 10px;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2><i class="fa-solid fa-list me-2"></i>Danh Sách Thể Loại Chờ Duyệt</h2>
+                <div>
+                    <a href="@Url.Action("Create", "Genre")" class="btn btn-success me-2">
+                        <i class="fa-solid fa-plus"></i> Thêm thể loại mới
+                    </a>
+                    <a href="@Url.Action("Index", "Genre")" class="btn btn-secondary">
+                        <i class="fa-solid fa-rotate-left"></i> Về danh sách chính
+                    </a>
+                </div>
+            </div>
+
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-circle-check me-2"></i>@TempData["Message"]
+                </div>
+            }
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="empty-message">
+                    <i class="fa-solid fa-circle-info me-1"></i> Hiện chưa có thể loại nào trong danh sách chờ.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%">Tên thể loại</th>
+                                <th>Mô tả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var genre in Model)
+                            {
+                                <tr>
+                                    <td>@genre.Name</td>
+                                    <td>@genre.Description</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                using (Html.BeginForm("PendingGenre", "Genre", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Lưu tất cả vào hệ thống
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

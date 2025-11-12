@@ -120,10 +120,31 @@
                             <tr>
                                 <td><input type="checkbox" name="selectedBooks" value="@item.Id" /></td> <!-- Checkbox cho mỗi dòng -->
                                 <td>@item.Id</td>
-                                <td>@item.Name</td>
+                                <td>
+                                    @Html.ActionLink(
+                                        linkText: item.Name,
+                                        actionName: "Details",
+                                        routeValues: new { id = item.Id },
+                                        htmlAttributes: new { @class = "link-primary fw-semibold text-decoration-none" }
+                                    )
+                                </td>
                                 <td>@item.PublicationDate.ToString("dd/MM/yyyy")</td>
                                 <td class="text-danger fw-bold">@Html.DisplayFor(_ => item.Price)</td>
-                                <td><img src="@Url.Content(item.CoverImageUrl)" class="cover-img" width="120" height="170" alt="Ảnh bìa" /></td>
+                                <td>
+                                    
+                                    @{
+                                        var url = item.CoverImageUrl ?? "";
+                                        var isDefault = url.EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
+                                        var fileKey = System.IO.Path.GetFileNameWithoutExtension(url); // đổi khi đổi ảnh
+                                        var imgSrc = isDefault
+                                            ? Url.Content(url)                                  // ảnh mặc định: không cần ?v=
+                                            : $"{Url.Content(url)}?v={fileKey}";               // ảnh thường: bám theo tên file
+                                    }
+                                    <img src="@imgSrc" class="cover-img" width="120" height="170" alt="Ảnh bìa" />
+                                
+
+
+                                </td>
                                 <td>
                                     <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-warning btn-sm me-1">Sửa</a>
                                     <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Xóa</a>
@@ -141,7 +162,7 @@
             </table>
 
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-danger">Xóa đã chọn</button> <!-- Nút xóa -->
+                <button type="submit" class="btn btn-danger">Xóa đã chọn</button>   
             </div>
         }
 

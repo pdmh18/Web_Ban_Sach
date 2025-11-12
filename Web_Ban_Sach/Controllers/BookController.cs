@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Web_Ban_Sach.Models;
 using System.IO;
+using System.Data.Entity;
 
 namespace Web_Ban_Sach.Controllers
 {
@@ -49,6 +50,12 @@ namespace Web_Ban_Sach.Controllers
             ViewBag.Search = search;
             return View(books);
         }
+       
+
+
+
+
+
 
         // them
         private const string PendingBooksSessionKey = "PendingBooks";// dùng key để truy cạp sesioon, thay viết viết PenPendingBooks thì gom thành 1 PendingBooksSessionKey
@@ -68,6 +75,9 @@ namespace Web_Ban_Sach.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            ViewBag.Genres = db.Genre.ToList();
+            ViewBag.Suppliers = db.Supplier.ToList();
+            ViewBag.Editors = db.Editor.ToList();
             return View(new BookDto());
         }
 
@@ -77,13 +87,7 @@ namespace Web_Ban_Sach.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-
-            if (model.PublicationDate == null)
-            {
-                ModelState.AddModelError("", "Ngày/tháng/năm xuất bản không hợp lệ.");
-                return View(model);
-            }
-
+        
 
             string imagePath;
             try

@@ -1,14 +1,16 @@
-﻿
-using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Web;
+using Web_Ban_Sach.CustomValidation;
+
 
 namespace Web_Ban_Sach.Models
 {
     [CustomValidation(typeof(BookDateValidator), nameof(BookDateValidator.ValidatePublicationDate))]
+
     public class BookDto
     {
         [Required(ErrorMessage = "Vui lòng nhập tên sách")]
@@ -27,7 +29,9 @@ namespace Web_Ban_Sach.Models
         [Range(1900, 2100, ErrorMessage = "Năm không hợp lệ")]
         public int? Year { get; set; } // nam xuat ban
 
+
         [Display(Name = "Ngày xuất bản")]
+        
         public DateTime? PublicationDate
         {
             get
@@ -61,6 +65,17 @@ namespace Web_Ban_Sach.Models
         public HttpPostedFileBase ImageFile { get; set; }
 
 
+        [Display(Name = "Thể loại")]
+        public int? GenreId { get; set; } // Thể loại sách
+        public virtual Genre Genre { get; set; } // Liên kết với Genre
+
+        [Display(Name = "Nhà cung cấp")]
+        public int? SupplierId { get; set; } // Nhà cung cấp sách
+        public virtual Supplier Supplier { get; set; } // Liên kết với Supplier
+
+        [Display(Name = "Phiên bản")]
+        public int? EditorId { get; set; } // Phiên bản sách
+        public virtual Editor Editor { get; set; } // Liên kết với Editor
 
         public string SaveImage(string serverPath)
         {

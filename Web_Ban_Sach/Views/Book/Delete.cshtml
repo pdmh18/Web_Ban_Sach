@@ -53,7 +53,12 @@
         <h2>Xác Nhận Xóa</h2>
 
         <div class="book-info">
-            <img src="@Url.Content(Model.CoverImageUrl)" alt="Ảnh bìa" />
+            @{
+                var img = Model?.CoverImageUrl ?? "~/Images/anhmacdinh.jpg";
+                var isDefault = img.EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
+                var imgSrc = isDefault ? Url.Content(img) : $"{Url.Content(img)}?peek=@DateTime.UtcNow.Ticks";
+            }
+            <img src="@imgSrc" alt="Ảnh bìa" />
             <h4>@Model.Name</h4>
             <p><strong>Ngày xuất bản:</strong> @Model.PublicationDate</p>
             <p><strong>Giá:</strong> @String.Format("{0:N0} đ", Model.Price)</p>

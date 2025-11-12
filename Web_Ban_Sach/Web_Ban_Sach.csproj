@@ -106,14 +106,44 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\BookController.cs" />
+    <Compile Include="Controllers\EditorController.cs" />
+    <Compile Include="Controllers\GenreController.cs" />
+    <Compile Include="Controllers\SupplierController.cs" />
+    <Compile Include="CustomValidation\BookDateValidator.cs" />
+    <Compile Include="CustomValidation\BookImageValidator.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202511071542316_InitialCreate.cs" />
+    <Compile Include="Migrations\202511071542316_InitialCreate.Designer.cs">
+      <DependentUpon>202511071542316_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511110928105_AddUpdateModel.cs" />
+    <Compile Include="Migrations\202511110928105_AddUpdateModel.Designer.cs">
+      <DependentUpon>202511110928105_AddUpdateModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511110944536_AddMaNCCMaPB.cs" />
+    <Compile Include="Migrations\202511110944536_AddMaNCCMaPB.Designer.cs">
+      <DependentUpon>202511110944536_AddMaNCCMaPB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511121244511_AddGenreSupplierEditor.cs" />
+    <Compile Include="Migrations\202511121244511_AddGenreSupplierEditor.Designer.cs">
+      <DependentUpon>202511121244511_AddGenreSupplierEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511121350272_genresuppliereditor.cs" />
+    <Compile Include="Migrations\202511121350272_genresuppliereditor.Designer.cs">
+      <DependentUpon>202511121350272_genresuppliereditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Book.cs" />
-    <Compile Include="Models\BookDateValidator.cs" />
     <Compile Include="Models\BookDto.cs" />
-    <Compile Include="Models\BookImageValidator.cs" />
     <Compile Include="Models\Books.cs" />
+    <Compile Include="Models\Editor.cs" />
+    <Compile Include="Models\EditorDto.cs" />
+    <Compile Include="Models\Genre.cs" />
+    <Compile Include="Models\GenreDto.cs" />
+    <Compile Include="Models\Supplier.cs" />
+    <Compile Include="Models\SupplierDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -124,12 +154,44 @@
     <Content Include="Views\Book\Update.cshtml" />
     <Content Include="Views\Book\Delete.cshtml" />
     <Content Include="Views\Book\PendingBooks.cshtml" />
+    <Content Include="Views\Genre\Index.cshtml" />
+    <Content Include="Views\Genre\Create.cshtml" />
+    <Content Include="Views\Genre\Edit.cshtml" />
+    <Content Include="Views\Genre\Delete.cshtml" />
+    <Content Include="Views\Genre\PendingGenre.cshtml" />
+    <Content Include="Views\Supplier\Index.cshtml" />
+    <Content Include="Views\Supplier\Create.cshtml" />
+    <Content Include="Views\Supplier\Edit.cshtml" />
+    <Content Include="Views\Supplier\Delete.cshtml" />
+    <Content Include="Views\Supplier\PendingSupplier.cshtml" />
+    <Content Include="Views\Editor\Index.cshtml" />
+    <Content Include="Views\Editor\Create.cshtml" />
+    <Content Include="Views\Editor\PendingEditor.cshtml" />
+    <Content Include="Views\Editor\Edit.cshtml" />
+    <Content Include="Views\Editor\Delete.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202511071542316_InitialCreate.resx">
+      <DependentUpon>202511071542316_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511110928105_AddUpdateModel.resx">
+      <DependentUpon>202511110928105_AddUpdateModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511110944536_AddMaNCCMaPB.resx">
+      <DependentUpon>202511110944536_AddMaNCCMaPB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511121244511_AddGenreSupplierEditor.resx">
+      <DependentUpon>202511121244511_AddGenreSupplierEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511121350272_genresuppliereditor.resx">
+      <DependentUpon>202511121350272_genresuppliereditor.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

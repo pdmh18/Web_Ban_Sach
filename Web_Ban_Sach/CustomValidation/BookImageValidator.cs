@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace Web_Ban_Sach.Models
+namespace Web_Ban_Sach.CustomValidation
 {
     public class BookImageValidator
     {

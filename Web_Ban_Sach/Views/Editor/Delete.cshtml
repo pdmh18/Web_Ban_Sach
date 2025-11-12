@@ -1,0 +1,107 @@
+﻿@model Web_Ban_Sach.Models.Editor
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xác Nhận Xóa Biên Tập</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f8f9fb;
+        }
+
+        .card {
+            max-width: 600px;
+            margin: 60px auto;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #dc3545;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .editor-info {
+            background-color: #fff3f3;
+            border: 1px solid #f5c2c7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+            .editor-info h4 {
+                color: #b02a37;
+                font-weight: 600;
+            }
+
+        .btn {
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+            .btn-danger:hover {
+                background-color: #bb2d3b;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5c636a;
+            }
+
+        p.text-warning {
+            color: #b02a37;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2><i class="fa-solid fa-triangle-exclamation"></i> Xác Nhận Xóa Biên Tập</h2>
+
+        <div class="editor-info mt-3">
+            <h4><i class="fa-solid fa-book me-2"></i>@Model.EditionNumber</h4>
+            <p><strong>Ngôn Ngữ:</strong> @Model.Language</p>
+            <p><strong>Số Trang:</strong> @Model.Pages</p>
+            <p><strong>Nhà Xuất Bản:</strong> @Model.Publisher</p>
+        </div>
+
+        <p class="text-warning">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+            Bạn có chắc chắn muốn xóa biên tập này? Hành động này không thể hoàn tác.
+        </p>
+
+        <form method="post" action="@Url.Action("Delete", "Editor", new { id = Model.Id })">
+            @Html.AntiForgeryToken()
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa-solid fa-trash me-1"></i> Xóa
+                </button>
+                @Html.ActionLink("Hủy", "Index", "Editor", null, new { @class = "btn btn-secondary" })
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

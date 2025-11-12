@@ -12,6 +12,9 @@ namespace Web_Ban_Sach.Models
         {
         }
         public DbSet<Book> Book { get; set; }
-        
+        public DbSet<Genre> Genre { get; set; }
+        public DbSet<Supplier> Supplier { get; set; }
+        public DbSet<Editor> Editor { get; set; }
+
     }
 }

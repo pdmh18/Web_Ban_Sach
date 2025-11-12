@@ -1,0 +1,129 @@
+﻿@model List<Web_Ban_Sach.Models.Supplier>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh Sách Nhà Cung Cấp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0d6efd;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+            .table thead {
+                background-color: #0d6efd;
+                color: #fff;
+            }
+
+            .table tbody tr:hover {
+                background-color: #f1f5ff;
+                transition: 0.3s;
+            }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        .btn-primary i {
+            margin-right: 6px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .empty-msg {
+            color: #6c757d;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2><i class="fa-solid fa-truck-field"></i> Danh Sách Nhà Cung Cấp</h2>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="@Url.Action("Create", "Supplier")" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Thêm Nhà Cung Cấp
+            </a>
+
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success mb-0">@TempData["Message"]</div>
+            }
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Nhà Cung Cấp</th>
+                            <th>Điện Thoại</th>
+                            <th>Địa Chỉ</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var supplier in Model)
+                        {
+                            <tr>
+                                <td>@supplier.Id</td>
+                                <td>@supplier.Name</td>
+                                <td>@supplier.ContactPhone</td>
+                                <td>@supplier.Address</td>
+                                <td class="actions">
+                                    <a href="@Url.Action("Edit", "Supplier", new { id = supplier.Id })"
+                                       class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                    </a>
+
+                                    <a href="@Url.Action("Delete", "Supplier", new { id = supplier.Id })"
+                                       class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="empty-msg"><i class="fa-regular fa-circle-xmark"></i> Hiện tại chưa có nhà cung cấp nào.</p>
+        }
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

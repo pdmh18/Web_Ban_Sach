@@ -18,16 +18,20 @@ namespace Web_Ban_Sach.Models
         public string Name { get; set; } // ten sach
 
 
+        [Display(Name = "Ngày")]
+        [Required(ErrorMessage = "Vui lòng nhập ngày xuất bản")]
         [Range(1, 31, ErrorMessage = "Ngày không hợp lệ")]
-        public int? Day { get; set; } // ngay xuat ban
+        public int? Day { get; set; }
 
-
+        [Display(Name = "Tháng")]
+        [Required(ErrorMessage = "Vui lòng nhập tháng xuất bản")]
         [Range(1, 12, ErrorMessage = "Tháng không hợp lệ")]
-        public int? Month { get; set; } // thang xuat ban
+        public int? Month { get; set; }
 
-
+        [Display(Name = "Năm")]
+        [Required(ErrorMessage = "Vui lòng nhập năm xuất bản")]
         [Range(1900, 2100, ErrorMessage = "Năm không hợp lệ")]
-        public int? Year { get; set; } // nam xuat ban
+        public int? Year { get; set; }
 
 
         [Display(Name = "Ngày xuất bản")]
@@ -66,14 +70,18 @@ namespace Web_Ban_Sach.Models
 
 
         [Display(Name = "Thể loại")]
+        [Required(ErrorMessage = "Vui lòng chọn thể loại sách")]
         public int? GenreId { get; set; } // Thể loại sách
         public virtual Genre Genre { get; set; } // Liên kết với Genre
+      
 
         [Display(Name = "Nhà cung cấp")]
+        [Required(ErrorMessage = "Vui lòng chọn nhà cung cấp")]
         public int? SupplierId { get; set; } // Nhà cung cấp sách
         public virtual Supplier Supplier { get; set; } // Liên kết với Supplier
 
         [Display(Name = "Phiên bản")]
+        [Required(ErrorMessage = "Vui lòng chọn phiên bản sách")]
         public int? EditorId { get; set; } // Phiên bản sách
         public virtual Editor Editor { get; set; } // Liên kết với Editor
 

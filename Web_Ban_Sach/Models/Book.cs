@@ -54,19 +54,22 @@ namespace Web_Ban_Sach.Models
 
 
         [Display(Name = "Thể loại")]
-        public int genreId { get; set; }
+        [Required(ErrorMessage = "Vui lòng chọn thể loại sách")]
+        public int? genreId { get; set; }
         [ForeignKey(nameof(genreId))]
         public virtual Genre Genre { get; set; }
 
 
 
         [Display(Name = "Nhà cung cấp")]
-        public int supplierId { get; set; }
+        [Required(ErrorMessage = "Vui lòng chọn nhà cung cấp")]
+        public int? supplierId { get; set; }
         [ForeignKey(nameof(supplierId))]
         public virtual Supplier Supplier { get; set; }
 
 
         [Display(Name = "Phiên bản")]
+        [Required(ErrorMessage = "Vui lòng chọn phiên bản sách")]
         public int? EditorId { get; set; }
         [ForeignKey(nameof(EditorId))]
         public virtual Editor Editor { get; set; }

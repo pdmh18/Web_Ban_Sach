@@ -100,7 +100,9 @@
       <DependentUpon>QuanLySach.mdf</DependentUpon>
     </Content>
     <Content Include="Global.asax" />
-    <Content Include="Images\anhmacdinh.jpg" />
+    <Content Include="Images\anhmacdinh.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +135,18 @@
     <Compile Include="Migrations\202511121350272_genresuppliereditor.cs" />
     <Compile Include="Migrations\202511121350272_genresuppliereditor.Designer.cs">
       <DependentUpon>202511121350272_genresuppliereditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511151645060_AddGenreSupplierEditorToBook.cs" />
+    <Compile Include="Migrations\202511151645060_AddGenreSupplierEditorToBook.Designer.cs">
+      <DependentUpon>202511151645060_AddGenreSupplierEditorToBook.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511151801280_UpdateBookModel.cs" />
+    <Compile Include="Migrations\202511151801280_UpdateBookModel.Designer.cs">
+      <DependentUpon>202511151801280_UpdateBookModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511151831422_UpdateBookDTOModel.cs" />
+    <Compile Include="Migrations\202511151831422_UpdateBookDTOModel.Designer.cs">
+      <DependentUpon>202511151831422_UpdateBookDTOModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Book.cs" />
@@ -191,6 +205,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202511121350272_genresuppliereditor.resx">
       <DependentUpon>202511121350272_genresuppliereditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511151645060_AddGenreSupplierEditorToBook.resx">
+      <DependentUpon>202511151645060_AddGenreSupplierEditorToBook.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511151801280_UpdateBookModel.resx">
+      <DependentUpon>202511151801280_UpdateBookModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511151831422_UpdateBookDTOModel.resx">
+      <DependentUpon>202511151831422_UpdateBookDTOModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

@@ -31,29 +31,34 @@
         }
         else
         {
-            <table class="table table-bordered table-striped">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Tên sách</th>
-                        <th>Ngày xuất bản</th>
-                        <th>Giá</th>
-                        <th>Mô tả</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.Count; i++)
-                    {
-                        <tr>
-                            <td>@(i + 1)</td>
-                            <td>@Model[i].Name</td>
-                            <td>@Model[i].PublicationDate.ToString("dd/MM/yyyy")</td>
-                            <td>@Model[i].Price</td>
-                            <td>@Model[i].Description</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Tên sách</th>
+                <th>Ngày xuất bản</th>
+                <th>Giá</th>
+                <th>Mô tả</th>
+                <th>Ảnh bìa</th> <!-- thêm cột ảnh -->
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@Model[i].Name</td>
+                    <td>@Model[i].PublicationDate.ToString("dd/MM/yyyy")</td>
+                    <td>@Model[i].Price</td>
+                    <td>@Model[i].Description</td>
+                    <td>
+                        <img src="@Url.Content(Model[i].CoverImageUrl)" alt="Ảnh bìa" style="max-height:100px;" class="img-thumbnail" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
 
             using (Html.BeginForm("PendingBooks", "Book", FormMethod.Post))
             {

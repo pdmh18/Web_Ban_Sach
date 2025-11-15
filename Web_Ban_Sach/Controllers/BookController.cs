@@ -20,6 +20,18 @@ namespace Web_Ban_Sach.Controllers
         {
 
             List<Book> books = db.Book.OrderByDescending(b => b.Id).ToList();
+            if (!string.IsNullOrEmpty(search))
+            {
+                books = db.Book.Where(row => row.Name.Contains(search)).ToList();
+            }
+
+            int pageSize = 3;
+            int totalBooks = books.Count;
+            int totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+            books = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();// lm tròn
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPage = totalPages;// hiện thi số phân trang
+
             switch (SortBy)
             {
                 case "Name":
@@ -36,17 +48,9 @@ namespace Web_Ban_Sach.Controllers
 
             }
 
-            int pageSize = 3;
-            int totalBooks = books.Count;
-            int totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
-            books = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPage = totalPages;
+           
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                books = db.Book.Where(row => row.Name.Contains(search)).ToList();
-            }
+           
             ViewBag.Search = search;
             return View(books);
         }
@@ -58,6 +62,7 @@ namespace Web_Ban_Sach.Controllers
 
 
         // them
+        // cho nó tcaapj nhatajk trên giao diện ko cho xử lí trong controller. bảng tạm treengiao diện
         private const string PendingBooksSessionKey = "PendingBooks";// dùng key để truy cạp sesioon, thay viết viết PenPendingBooks thì gom thành 1 PendingBooksSessionKey
         // kho tạm để lưu sách chờ thêm vào db
         private List<Book> GetPendingBooks()
@@ -86,7 +91,13 @@ namespace Web_Ban_Sach.Controllers
         public ActionResult Create(BookDto model)
         {
             if (!ModelState.IsValid)
+            { 
+                ViewBag.Genres = db.Genre.ToList();
+                ViewBag.Suppliers = db.Supplier.ToList();
+                ViewBag.Editors = db.Editor.ToList();
                 return View(model);
+            }
+                
         
 
             string imagePath;
@@ -97,6 +108,9 @@ namespace Web_Ban_Sach.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Lỗi lưu ảnh" + ex.Message);
+                ViewBag.Genres = db.Genre.ToList();
+                ViewBag.Suppliers = db.Supplier.ToList();
+                ViewBag.Editors = db.Editor.ToList();
                 return View(model);
             }
 
@@ -107,7 +121,11 @@ namespace Web_Ban_Sach.Controllers
                 Description = model.Description,
                 Price = (double)model.Price,
                 CoverImageUrl = imagePath,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                genreId = model.GenreId,
+                supplierId = model.SupplierId,
+                EditorId = model.EditorId
+
             };
 
             var pending = GetPendingBooks();
@@ -151,6 +169,7 @@ namespace Web_Ban_Sach.Controllers
             if (string.IsNullOrEmpty(imagePath) || imagePath.Equals(DefaultImage, StringComparison.OrdinalIgnoreCase))
                 return;
 
+
             // Chuyển đổi đường dẫn ảo thành đường dẫn vật lý
             var physical = Server.MapPath(imagePath);
 
@@ -178,8 +197,14 @@ namespace Web_Ban_Sach.Controllers
                 Month = b.PublicationDate.Month,
                 Year = b.PublicationDate.Year,
                 Description = b.Description,
-                Price = b.Price
+                Price = b.Price,
+                GenreId = b.genreId,
+                SupplierId = b.supplierId,
+                EditorId = b.EditorId
             };
+            ViewBag.Genres = db.Genre.ToList();
+            ViewBag.Suppliers = db.Supplier.ToList();
+            ViewBag.Editors = db.Editor.ToList();
 
             ViewBag.BookId = id; // giữ id riêng
             ViewBag.ExistingCover = b.CoverImageUrl;  // ảnh hiện tại để fallback
@@ -195,6 +220,9 @@ namespace Web_Ban_Sach.Controllers
             {
                 ViewBag.BookId = id;
                 ViewBag.ExistingCover = existingCover;
+                ViewBag.Genres = db.Genre.ToList();
+                ViewBag.Suppliers = db.Supplier.ToList();
+                ViewBag.Editors = db.Editor.ToList();
                 return View(model);
             }
 
@@ -206,6 +234,9 @@ namespace Web_Ban_Sach.Controllers
                 ModelState.AddModelError("", "Ngày/tháng/năm xuất bản không hợp lệ.");
                 ViewBag.BookId = id;
                 ViewBag.ExistingCover = existingCover;
+                ViewBag.Genres = db.Genre.ToList();
+                ViewBag.Suppliers = db.Supplier.ToList();
+                ViewBag.Editors = db.Editor.ToList();
                 return View(model);
             }
 
@@ -230,6 +261,10 @@ namespace Web_Ban_Sach.Controllers
                 ModelState.AddModelError("", "Lỗi lưu ảnh: " + ex.Message);
                 ViewBag.BookId = id;
                 ViewBag.ExistingCover = existingCover;
+                ViewBag.Genres = db.Genre.ToList();
+                ViewBag.Suppliers = db.Supplier.ToList();
+                ViewBag.Editors = db.Editor.ToList();
+
                 return View(model);
             }
 
@@ -238,6 +273,9 @@ namespace Web_Ban_Sach.Controllers
             book.PublicationDate = model.PublicationDate.Value;
             book.Price = model.Price.GetValueOrDefault();
             book.Description = model.Description;
+            book.genreId = model.GenreId.GetValueOrDefault();
+            book.supplierId = model.SupplierId.GetValueOrDefault();
+            book.EditorId = model.EditorId.GetValueOrDefault();
 
             db.SaveChanges();
             return RedirectToAction("Index");

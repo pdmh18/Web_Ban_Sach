@@ -66,7 +66,7 @@
             @Html.ActionLink("Thêm sách mới", "Create", "Book", null, new { @class = "btn btn-success btn-lg shadow-sm" })
         </div>
 
-        @using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "d-flex align-items-center flex-wrap mb-3" }))
+        @using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "d-flex align-items-center flex-wrap mb-3" }))// xử lí lại. khii loda vẫm còn
         {
             @Html.Label("search", "", new { @class = "me-2" })
             @Html.TextBox("search", ViewBag.Search as string, new { @class = "form-control me-2 w-auto", placeholder = "Nhập tên sách..." })

@@ -14,7 +14,7 @@ namespace Web_Ban_Sach.CustomValidation
 
             if (dto == null || !dto.Day.HasValue || !dto.Month.HasValue || !dto.Year.HasValue)
             {
-                return new ValidationResult("Vui lòng nhập đầy đủ ngày/tháng/năm xuất bản.", new[] { "Day", "Month", "Year" });
+                return new ValidationResult("Vui lòng nhập đầy đủ ngày/tháng/năm xuất bản.", new[] { "PublicationDate" });
             }
 
             if (dto.PublicationDate == null)

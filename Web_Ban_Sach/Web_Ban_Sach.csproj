@@ -183,6 +183,7 @@
     <Content Include="Views\Editor\PendingEditor.cshtml" />
     <Content Include="Views\Editor\Edit.cshtml" />
     <Content Include="Views\Editor\Delete.cshtml" />
+    <Content Include="Views\Book\_PendingBooksTable.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

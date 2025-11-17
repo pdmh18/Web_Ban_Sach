@@ -35,7 +35,8 @@ namespace Web_Ban_Sach.Models
 
 
         [Display(Name = "Ngày xuất bản")]
-        
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", NullDisplayText = "")]
+
         public DateTime? PublicationDate
         {
             get

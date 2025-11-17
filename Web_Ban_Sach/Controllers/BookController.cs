@@ -7,7 +7,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Web_Ban_Sach.Models;
-using System.IO;
 using System.Data.Entity;
 
 namespace Web_Ban_Sach.Controllers
@@ -18,41 +17,54 @@ namespace Web_Ban_Sach.Controllers
 
         public ActionResult Index(string SortBy, int page = 1, string search = "")
         {
+            var books = db.Book.AsQueryable();
 
-            List<Book> books = db.Book.OrderByDescending(b => b.Id).ToList();
+            // Tìm kiếm
             if (!string.IsNullOrEmpty(search))
             {
-                books = db.Book.Where(row => row.Name.Contains(search)).ToList();
+                books = books.Where(b => b.Name.Contains(search));
+            }
+
+            // Sắp xếp
+            switch (SortBy)
+            {
+                case "IdAsc":
+                    books = books.OrderBy(b => b.Id);
+                    break;
+                case "IdDesc":
+                    books = books.OrderByDescending(b => b.Id);
+                    break;
+                case "Name":
+                    books = books.OrderBy(b => b.Name);
+                    break;
+                case "Price":
+                    books = books.OrderBy(b => b.Price);
+                    break;
+                case "PublicationDate":
+                    books = books.OrderBy(b => b.PublicationDate);
+                    break;
+                default:
+                    // mặc định: mới nhất lên đầu
+                    books = books.OrderByDescending(b => b.Id);
+                    break;
             }
 
             int pageSize = 3;
-            int totalBooks = books.Count;
+            int totalBooks = books.Count();
             int totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
-            books = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();// lm tròn
+
+            var BOOK = books
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             ViewBag.CurrentPage = page;
-            ViewBag.TotalPage = totalPages;// hiện thi số phân trang
-
-            switch (SortBy)
-            {
-                case "Name":
-                    books = books.OrderBy(e => e.Name).ToList();
-                    break;
-                case "Price":
-                    books = books.OrderBy(e => e.Price).ToList();
-                    break;
-                case "PublicationDate":
-                    books = books.OrderBy(e => e.PublicationDate).ToList();
-                    break;
-                default:
-                    break;
-
-            }
-
-           
-
-           
+            ViewBag.TotalPage = totalPages;
+            ViewBag.PageSize = pageSize;
             ViewBag.Search = search;
-            return View(books);
+            ViewBag.CurrentSort = SortBy;
+
+            return View(BOOK);
         }
        
 
@@ -80,9 +92,22 @@ namespace Web_Ban_Sach.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            ViewBag.Genres = db.Genre.ToList();
-            ViewBag.Suppliers = db.Supplier.ToList();
-            ViewBag.Editors = db.Editor.ToList();
+            ViewBag.Genres = db.Genre
+                       .GroupBy(g => g.Name)
+                       .Select(g => g.FirstOrDefault())
+                       .ToList();
+
+            ViewBag.Suppliers = db.Supplier
+                                  .GroupBy(s => s.Name)
+                                  .Select(s => s.FirstOrDefault())
+                                  .ToList();
+
+            ViewBag.Editors = db.Editor
+                                .GroupBy(e => e.EditionNumber)
+                                .Select(e => e.FirstOrDefault())
+                                .ToList();
+            var pending = GetPendingBooks();
+            ViewBag.PendingBooks = pending;
             return View(new BookDto());
         }
 
@@ -134,25 +159,75 @@ namespace Web_Ban_Sach.Controllers
             return RedirectToAction("PendingBooks");
         }
 
-        // list them sach
-        public ActionResult PendingBooks()// hiển thị all ds chờ thêm
-        {
-            var pending = GetPendingBooks();
-            return View(pending);
-        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PendingBooks(List<Book> booksDummy = null)
+        public ActionResult AddToPending(BookDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = 400;
+                return Content("Dữ liệu không hợp lệ.");
+            }
+
+            string imagePath = null;
+            try
+            {
+                if (model.ImageFile != null && model.ImageFile.ContentLength > 0)
+                {
+                    imagePath = model.SaveImage(Server.MapPath("~/"));
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = 500;
+                return Content("Lỗi lưu ảnh: " + ex.Message);
+            }
+            var genre = db.Genre.Find(model.GenreId);
+            var supplier = db.Supplier.Find(model.SupplierId);
+            var editor = db.Editor.Find(model.EditorId);
+
+            var book = new Book
+            {
+                Name = model.Name,
+                PublicationDate = (DateTime)model.PublicationDate,
+                Description = model.Description,
+                Price = (double)model.Price,
+                CoverImageUrl = imagePath,
+                CreatedAt = DateTime.Now,
+                genreId = model.GenreId,
+                supplierId = model.SupplierId,
+                EditorId = model.EditorId,
+
+                // GÁN NAVIGATION LUÔN, để view đọc được .Name
+                Genre = genre,
+                Supplier = supplier,
+                Editor = editor
+            };
+
+            var pending = GetPendingBooks();
+            pending.Add(book);
+
+            // trả lại HTML của bảng chờ để cập nhật trên giao diện
+            return PartialView("_PendingBooksTable", pending);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SavePending()
         {
             var pending = Session[PendingBooksSessionKey] as List<Book>;
 
             if (pending == null || !pending.Any())
             {
-                return RedirectToAction("PendingBooks");
+                return RedirectToAction("Create");
             }
 
             foreach (var b in pending)
             {
+                // không cho EF tự insert Genre/Supplier/Editor
+                b.Genre = null;
+                b.Supplier = null;
+                b.Editor = null;
                 db.Book.Add(b);
             }
 
@@ -161,6 +236,35 @@ namespace Web_Ban_Sach.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+        // list them sach
+        //public ActionResult PendingBooks()// hiển thị all ds chờ thêm
+        //{
+        //    var pending = GetPendingBooks();
+        //    return View(pending);
+        //}
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult PendingBooks(List<Book> booksDummy = null)
+        //{
+        //    var pending = Session[PendingBooksSessionKey] as List<Book>;
+
+        //    if (pending == null || !pending.Any())
+        //    {
+        //        return RedirectToAction("PendingBooks");
+        //    }
+
+        //    foreach (var b in pending)
+        //    {
+        //        db.Book.Add(b);
+        //    }
+
+        //    db.SaveChanges();
+        //    Session[PendingBooksSessionKey] = null;
+
+        //    return RedirectToAction("Index");
+        //}
 
         // xóa ảnh trogn thư mục
         private const string DefaultImage = "~/Images/anhmacdinh.jpg";

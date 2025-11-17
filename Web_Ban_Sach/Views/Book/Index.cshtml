@@ -104,7 +104,17 @@
                 <thead>
                     <tr>
                         <th style="width:40px;"> <input type="checkbox" id="selectAll" /> Chọn</th> <!-- Ô chọn cho mỗi dòng -->
-                        <th>ID</th>
+                        <th>
+                            @Html.ActionLink(
+                                "ID",
+                                "Index",
+                                new
+                                     {
+                                    SortBy = (ViewBag.CurrentSort as string) == "IdAsc" ? "IdDesc" : "IdAsc",
+                                    search = ViewBag.Search,
+                                    page = ViewBag.CurrentPage
+                                })
+                        </th>
                         <th>Tên sách</th>
                         <th>Ngày xuất bản</th>
                         <th>Giá</th>
@@ -118,7 +128,7 @@
                         foreach (var item in Model)
                         {
                             <tr>
-                                <td><input type="checkbox" name="selectedBooks" value="@item.Id" /></td> <!-- Checkbox cho mỗi dòng -->
+                                <td><input type="checkbox" name="selectedBooks" value="@item.Id" /></td> 
                                 <td>@item.Id</td>
                                 <td>
                                     @Html.ActionLink(
@@ -128,23 +138,40 @@
                                         htmlAttributes: new { @class = "link-primary fw-semibold text-decoration-none" }
                                     )
                                 </td>
-                                <td>@item.PublicationDate.ToString("dd/MM/yyyy")</td>
+                                <td>@Html.DisplayFor(m => item.PublicationDate)</td>
                                 <td class="text-danger fw-bold">@Html.DisplayFor(_ => item.Price)</td>
                                 <td>
-                                    
                                     @{
-                                        var url = item.CoverImageUrl ?? "";
-                                        var isDefault = url.EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
-                                        var fileKey = System.IO.Path.GetFileNameWithoutExtension(url); // đổi khi đổi ảnh
-                                        var imgSrc = isDefault
-                                            ? Url.Content(url)                                  // ảnh mặc định: không cần ?v=
-                                            : $"{Url.Content(url)}?v={fileKey}";               // ảnh thường: bám theo tên file
+                                        // Nếu chưa có ảnh thì dùng ảnh mặc định
+                                        var rawUrl = string.IsNullOrWhiteSpace(item.CoverImageUrl)
+                                            ? "~/Images/anhmacdinh.jpg"
+                                            : item.CoverImageUrl;
+
+                                        var isDefault = rawUrl.EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
+
+                                        // Đường dẫn đã qua Url.Content
+                                        var resolvedUrl = Url.Content(rawUrl);
+
+                                        string imgSrc;
+                                        if (isDefault)
+                                        {
+                                            // Ảnh mặc định: không cần ?v
+                                            imgSrc = resolvedUrl;
+                                        }
+                                        else
+                                        {
+                                            // Ảnh riêng: thêm ?v= theo tên file để cache-busting
+                                            var fileKey = System.IO.Path.GetFileNameWithoutExtension(rawUrl) ?? "";
+                                            imgSrc = string.IsNullOrEmpty(fileKey)
+                                                ? resolvedUrl       // phòng hờ, vẫn tránh lỗi
+                                                : $"{resolvedUrl}?v={fileKey}";
+                                        }
                                     }
+
+                                    @*<img src="@imgSrc" class="img-thumbnail" style="max-width: 80px; max-height: 100px;" />*@
                                     <img src="@imgSrc" class="cover-img" width="120" height="170" alt="Ảnh bìa" />
-                                
-
-
                                 </td>
+
                                 <td>
                                     <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-warning btn-sm me-1">Sửa</a>
                                     <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Xóa</a>

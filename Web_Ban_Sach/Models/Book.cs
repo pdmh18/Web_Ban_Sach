@@ -23,6 +23,8 @@ namespace Web_Ban_Sach.Models
 
         [DataType(DataType.Date)]
         [Display(Name = "Ngày xuất bản")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+
         public DateTime PublicationDate { get; set; } // ngay xuat ban
 
 

@@ -238,33 +238,7 @@ namespace Web_Ban_Sach.Controllers
         }
 
 
-        // list them sach
-        //public ActionResult PendingBooks()// hiển thị all ds chờ thêm
-        //{
-        //    var pending = GetPendingBooks();
-        //    return View(pending);
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult PendingBooks(List<Book> booksDummy = null)
-        //{
-        //    var pending = Session[PendingBooksSessionKey] as List<Book>;
-
-        //    if (pending == null || !pending.Any())
-        //    {
-        //        return RedirectToAction("PendingBooks");
-        //    }
-
-        //    foreach (var b in pending)
-        //    {
-        //        db.Book.Add(b);
-        //    }
-
-        //    db.SaveChanges();
-        //    Session[PendingBooksSessionKey] = null;
-
-        //    return RedirectToAction("Index");
-        //}
+        
 
         // xóa ảnh trogn thư mục
         private const string DefaultImage = "~/Images/anhmacdinh.jpg";

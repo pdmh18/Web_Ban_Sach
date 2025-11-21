@@ -1,0 +1,39 @@
+﻿@model List<Web_Ban_Sach.Models.Genre>
+
+<div class="dh-sidebar-card">
+    <div class="dh-sidebar-title">
+        <i class="fa-solid fa-list-ul"></i> Thể loại sách
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered mb-0 dh-sidebar-table">
+            <thead>
+                <tr>
+                    <th>Thể loại</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="@(ViewBag.CurrentGenreId == null ? "active-genre" : "")">
+                    <td>
+                        <a href="@Url.Action("Index", "Home", new { genreId = (int?)null, search = ViewBag.Search, SortBy = ViewBag.CurrentSort })">
+                            Tất cả sách
+                        </a>
+                    </td>
+                </tr>
+
+                @foreach (var g in Model)
+                {
+                    bool active = (ViewBag.CurrentGenreId != null && (int)ViewBag.CurrentGenreId == g.Id);
+                    <tr class="@(active ? "active-genre" : "")">
+                        <td>
+                            <a href="@Url.Action("Index", "Home",
+                                      new { genreId = g.Id, search = ViewBag.Search, SortBy = ViewBag.CurrentSort })">
+                                @g.Name
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

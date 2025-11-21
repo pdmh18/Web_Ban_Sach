@@ -110,6 +110,7 @@
     <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\GenreController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="CustomValidation\BookDateValidator.cs" />
     <Compile Include="CustomValidation\BookImageValidator.cs" />
@@ -175,7 +176,6 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
-    <Content Include="Views\Book\Update.cshtml" />
     <Content Include="Views\Book\Delete.cshtml" />
     <Content Include="Views\Book\PendingBooks.cshtml" />
     <Content Include="Views\Genre\Index.cshtml" />
@@ -197,6 +197,10 @@
     <Content Include="Views\Shared\_LayoutPage1.cshtml" />
     <Content Include="Views\Book\Index.cshtml" />
     <Content Include="Views\Book\Create.cshtml" />
+    <Content Include="Views\Book\Update.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\GenreSidebar.cshtml" />
+    <Content Include="Views\Home\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,215 +1,205 @@
-﻿﻿@model Web_Ban_Sach.Models.BookDto
+﻿﻿﻿@model Web_Ban_Sach.Models.BookDto
 @{
-    Layout = null;
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
     var img = (string)ViewBag.ExistingCover ?? "~/Images/anhmacdinh.jpg";
 }
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <title>Cập nhật sách</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            background: #f5f7fb;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        }
+<style>
+    body {
+        background: #f5f7fb;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        .page-wrap {
-            max-width: 920px;
-            margin: 48px auto;
-        }
+    .page-wrap {
+        max-width: 920px;
+        margin: 48px auto;
+    }
 
-        .page-title {
-            font-weight: 800;
-            letter-spacing: .2px;
-        }
+    .page-title {
+        font-weight: 800;
+        letter-spacing: .2px;
+    }
 
-        .subtle {
-            color: #6c757d;
-        }
+    .subtle {
+        color: #6c757d;
+    }
 
-        .card-soft {
-            border: 1px solid #eef0f3;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(16,24,40,.06);
-            background: #fff;
-        }
+    .card-soft {
+        border: 1px solid #eef0f3;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(16,24,40,.06);
+        background: #fff;
+    }
 
-        .section-title {
-            font-weight: 700;
-            font-size: 1.05rem;
-            margin-bottom: 12px;
-        }
+    .section-title {
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 12px;
+    }
 
-        .cover {
-            width: 148px;
-            height: 208px;
-            object-fit: cover;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,.10);
-        }
+    .cover {
+        width: 148px;
+        height: 208px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,.10);
+    }
 
-        .hint {
-            font-size: .925rem;
-            color: #6c757d;
-        }
+    .hint {
+        font-size: .925rem;
+        color: #6c757d;
+    }
 
-        .btn-pill {
-            border-radius: 999px;
-            padding: .65rem 1.1rem;
-        }
+    .btn-pill {
+        border-radius: 999px;
+        padding: .65rem 1.1rem;
+    }
 
-        .divider {
-            height: 1px;
-            background: #eef0f3;
-            margin: 16px 0 8px;
-        }
+    .divider {
+        height: 1px;
+        background: #eef0f3;
+        margin: 16px 0 8px;
+    }
 
-        .form-control, .form-select {
-            border-radius: 10px;
-        }
+    .form-control, .form-select {
+        border-radius: 10px;
+    }
 
-        .sticky-actions {
-            position: sticky;
-            bottom: 0;
-            background: #fff;
-            border-top: 1px solid #eef0f3;
-            padding: 16px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-    </style>
-</head>
-<body>
+    .sticky-actions {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        border-top: 1px solid #eef0f3;
+        padding: 16px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+</style>
 
-    <div class="page-wrap">
-        <div class="d-flex align-items-end justify-content-between mb-3">
-            <div>
-                <h1 class="page-title mb-1">Cập nhật sách</h1>
-            </div>
-            @Html.ActionLink("Về danh sách", "Index", null, new { @class = "btn btn-outline-secondary btn-pill" })
+<div class="page-wrap">
+    <div class="d-flex align-items-end justify-content-between mb-3">
+        <div>
+            <h1 class="page-title mb-1">Cập nhật sách</h1>
         </div>
-
-        <div class="card-soft">
-            <div class="p-4 p-md-5">
-
-                @using (Html.BeginForm("Update", "Book", new { id = ViewBag.BookId }, FormMethod.Post, new { enctype = "multipart/form-data" }))
-                {
-                    @Html.AntiForgeryToken()
-                    @Html.Hidden("existingCover", (string)ViewBag.ExistingCover)
-
-                    <div class="row g-4">
-                        <div class="col-md-8">
-                            <div class="section-title">Thông tin cơ bản</div>
-
-                            <div class="mb-3">
-                                @Html.LabelFor(m => m.Name, new { @class = "form-label fw-semibold" })
-                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Tên sách..." })
-                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="mb-3">
-                                @Html.LabelFor(m => m.AuthorName, new { @class = "form-label fw-semibold" })
-                                @Html.TextBoxFor(m => m.AuthorName, new { @class = "form-control", placeholder = "Tên tác giả..." })
-                                @Html.ValidationMessageFor(m => m.AuthorName, "", new { @class = "text-danger" })
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Ngày xuất bản</label>
-                                <div class="row g-2">
-                                    <div class="col-4 col-sm-3">
-                                        @Html.TextBoxFor(m => m.Day, new { @class = "form-control", type = "number", min = "1", max = "31", placeholder = "Ngày" })
-                                    </div>
-                                    <div class="col-4 col-sm-3">
-                                        @Html.DropDownListFor(
-                                                    m => m.Month,
-                                                    Enumerable.Range(1, 12).Select(i => new SelectListItem
-                                                    {
-                                                        Value = i.ToString(),
-                                                        Text = i.ToString()
-                                                    }),
-                                                    "Tháng",
-                                                    new { @class = "form-control" }
-                                                )
-                                    </div>
-                                    <div class="col-4 col-sm-3">
-                                        @Html.TextBoxFor(m => m.Year, new { @class = "form-control", type = "number", min = "1900", max = "2100", placeholder = "Năm" })
-                                    </div>
-                                </div>
-                                @Html.ValidationMessageFor(m => m.PublicationDate, "", new { @class = "text-danger" })
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            </div>
-
-                            <div class="mb-3">
-                                @Html.LabelFor(m => m.Price, "Giá bán (VNĐ)", new { @class = "form-label fw-semibold" })
-                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", min = "0", placeholder = "Ví dụ: 120000" })
-                                @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger small" })
-                            </div>
-
-                            <div class="mb-0">
-                                @Html.LabelFor(m => m.Description, "Mô tả", new { @class = "form-label fw-semibold" })
-                                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "5", placeholder = "Mô tả nội dung hoặc điểm nổi bật..." })
-                            </div>
-
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.GenreId, "Thể loại")
-                                @Html.DropDownListFor(m => m.GenreId, new SelectList(ViewBag.Genres, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-select" })
-                                @Html.ValidationMessageFor(m => m.GenreId, "", new { @class = "text-danger" })
-                            </div>
-
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.SupplierId, "Nhà cung cấp")
-                                @Html.DropDownListFor(m => m.SupplierId, new SelectList(ViewBag.Suppliers, "Id", "Name"), "-- Chọn nhà cung cấp --", new { @class = "form-select" })
-                                @Html.ValidationMessageFor(m => m.SupplierId, "", new { @class = "text-danger" })
-                            </div>
-
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.EditorId, "Phiên bản")
-                                @Html.DropDownListFor(m => m.EditorId, new SelectList(ViewBag.Editors, "Id", "EditionNumber"), "-- Chọn phiên bản --", new { @class = "form-select" })
-                                @Html.ValidationMessageFor(m => m.EditorId, "", new { @class = "text-danger" })
-                            </div>
-
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="section-title">Ảnh bìa</div>
-                            <div class="text-center mb-3">
-                                @{
-                                    // img đã được set ở đầu view:
-                                    // var img = (string)ViewBag.ExistingCover ?? "~/Images/anhmacdinh.jpg";
-                                    var isDefault = (img ?? "").EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
-                                    var previewSrc = isDefault
-                                        ? Url.Content(img)
-                                        : $"{Url.Content(img)}?peek={DateTime.UtcNow.Ticks}"; // ép trình duyệt tải mới
-                                }
-                                <img src="@previewSrc" alt="Ảnh bìa" class="cover" />
-                            </div>
-
-                            <div class="mb-2">
-                                <label class="form-label fw-semibold">Chọn ảnh mới (tuỳ chọn)</label>
-                                <input type="file" name="ImageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
-                                @Html.ValidationMessageFor(m => m.ImageFile, "", new { @class = "text-danger small" })
-                            </div>
-
-                            <div class="hint">Hỗ trợ: .jpg, .jpeg, .png, .gif</div>
-                            <div class="divider"></div>
-                            <div class="small subtle">Nếu không chọn ảnh mới, hệ thống sẽ giữ ảnh hiện tại.</div>
-                        </div>
-
-                    </div>
-
-                    <div class="sticky-actions">
-                        <button type="submit" class="btn btn-primary btn-pill">Lưu thay đổi</button>
-                        @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-light btn-pill border" })
-                    </div>
-                }
-            </div>
-        </div>
+        @Html.ActionLink("Về danh sách", "Index", null, new { @class = "btn btn-outline-secondary btn-pill" })
     </div>
 
-</body>
-</html>
+    <div class="card-soft">
+        <div class="p-4 p-md-5">
+
+            @using (Html.BeginForm("Update", "Book", new { id = ViewBag.BookId }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("existingCover", (string)ViewBag.ExistingCover)
+
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="section-title">Thông tin cơ bản</div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Name, new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Tên sách..." })
+                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.AuthorName, new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.AuthorName, new { @class = "form-control", placeholder = "Tên tác giả..." })
+                            @Html.ValidationMessageFor(m => m.AuthorName, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ngày xuất bản</label>
+                            <div class="row g-2">
+                                <div class="col-4 col-sm-3">
+                                    @Html.TextBoxFor(m => m.Day, new { @class = "form-control", type = "number", min = "1", max = "31", placeholder = "Ngày" })
+                                </div>
+                                <div class="col-4 col-sm-3">
+                                    @Html.DropDownListFor(
+                                                m => m.Month,
+                                                Enumerable.Range(1, 12).Select(i => new SelectListItem
+                                                {
+                                                    Value = i.ToString(),
+                                                    Text = i.ToString()
+                                                }),
+                                                "Tháng",
+                                                new { @class = "form-control" }
+                                            )
+                                </div>
+                                <div class="col-4 col-sm-3">
+                                    @Html.TextBoxFor(m => m.Year, new { @class = "form-control", type = "number", min = "1900", max = "2100", placeholder = "Năm" })
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.PublicationDate, "", new { @class = "text-danger" })
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Price, "Giá bán (VNĐ)", new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", min = "0", placeholder = "Ví dụ: 120000" })
+                            @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-0">
+                            @Html.LabelFor(m => m.Description, "Mô tả", new { @class = "form-label fw-semibold" })
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "5", placeholder = "Mô tả nội dung hoặc điểm nổi bật..." })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.GenreId, "Thể loại")
+                            @Html.DropDownListFor(m => m.GenreId, new SelectList(ViewBag.Genres, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(m => m.GenreId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.SupplierId, "Nhà cung cấp")
+                            @Html.DropDownListFor(m => m.SupplierId, new SelectList(ViewBag.Suppliers, "Id", "Name"), "-- Chọn nhà cung cấp --", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(m => m.SupplierId, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.EditorId, "Phiên bản")
+                            @Html.DropDownListFor(m => m.EditorId, new SelectList(ViewBag.Editors, "Id", "EditionNumber"), "-- Chọn phiên bản --", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(m => m.EditorId, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="section-title">Ảnh bìa</div>
+                        <div class="text-center mb-3">
+                            @{
+                                // img đã được set ở đầu view:
+                                // var img = (string)ViewBag.ExistingCover ?? "~/Images/anhmacdinh.jpg";
+                                var isDefault = (img ?? "").EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
+                                var previewSrc = isDefault
+                                    ? Url.Content(img)
+                                    : $"{Url.Content(img)}?peek={DateTime.UtcNow.Ticks}"; // ép trình duyệt tải mới
+                            }
+                            <img src="@previewSrc" alt="Ảnh bìa" class="cover" />
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Chọn ảnh mới (tuỳ chọn)</label>
+                            <input type="file" name="ImageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif" />
+                            @Html.ValidationMessageFor(m => m.ImageFile, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="hint">Hỗ trợ: .jpg, .jpeg, .png, .gif</div>
+                        <div class="divider"></div>
+                        <div class="small subtle">Nếu không chọn ảnh mới, hệ thống sẽ giữ ảnh hiện tại.</div>
+                    </div>
+
+                </div>
+
+                <div class="sticky-actions">
+                    <button type="submit" class="btn btn-primary btn-pill">Lưu thay đổi</button>
+                    @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-light btn-pill border" })
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

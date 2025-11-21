@@ -1,0 +1,95 @@
+﻿@model Web_Ban_Sach.Models.Book
+@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+<style>
+    .book-thumb-wrapper {
+        height: 260px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 14px 0 0 14px;
+    }
+
+    .book-thumb {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+</style>
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="row g-0">
+            <!-- ẢNH BÌA -->
+            <div class="col-md-4">
+                <div class="book-thumb-wrapper">
+                    <img class="book-thumb"
+                         src="@Url.Content(string.IsNullOrEmpty(Model.CoverImageUrl)
+                             ? "~/Images/anhmacdinh.jpg"
+                             : Model.CoverImageUrl)"
+                         alt="@Model.Name" />
+                </div>
+            </div>
+
+            <!-- THÔNG TIN SÁCH -->
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h3 class="mb-2">@Model.Name</h3>
+
+                    @{
+                        // Lấy danh sách tên tác giả (nếu có)
+                        string authors = "Đang cập nhật";
+                        if (Model.BookAuthors != null && Model.BookAuthors.Any())
+                        {
+                            authors = string.Join(", ",
+                                Model.BookAuthors
+                                     .Where(ba => ba.Author != null)
+                                     .Select(ba => ba.Author.Name));
+                        }
+                    }
+
+                    <p class="mb-1">
+                        <strong>Tác giả:</strong> @authors
+                    </p>
+
+                    <p class="mb-1">
+                        <strong>Thể loại:</strong> @Model.Genre.Name
+                    </p>
+
+                    <p class="mb-1">
+                        <strong>Nhà cung cấp:</strong> @Model.Supplier.Name
+                    </p>
+
+                    <p class="mb-1">
+                        <strong>Ngày xuất bản:</strong>
+                        @(Model.PublicationDate.ToString("dd/MM/yyyy"))
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Giá:</strong>
+                        <span class="text-danger fw-bold">
+                            @String.Format("{0:N0} đ", Model.Price)
+                        </span>
+                    </p>
+
+                    <hr />
+
+                    <p>
+                        <strong>Mô tả:</strong><br />
+                        @Model.Description
+                    </p>
+
+                    <a href="@Url.Action("Index", "Home")"
+                       class="btn btn-outline-secondary btn-sm mt-2">
+                        ← Quay lại danh sách
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

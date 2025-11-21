@@ -1,264 +1,250 @@
-﻿﻿@model List<Web_Ban_Sach.Models.Book>
+﻿﻿﻿@model List<Web_Ban_Sach.Models.Book>
 @{
-    Layout = null;
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Danh Sách Sách</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        }
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        h2 {
-            text-align: center;
-            margin: 30px 0;
-            font-weight: 600;
-            color: #343a40;
-        }
+    h2 {
+        text-align: center;
+        margin: 30px 0;
+        font-weight: 600;
+        color: #343a40;
+    }
 
-        .table thead {
-            background-color: #0d6efd;
-            color: white;
-        }
+    .table thead {
+        background-color: #0d6efd;
+        color: white;
+    }
 
-        .table tbody tr:hover {
-            background-color: #f1f1f1;
-            transition: 0.2s ease-in-out;
-        }
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+        transition: 0.2s ease-in-out;
+    }
 
-        .btn-add {
-            display: inline-block;
-            margin-bottom: 20px;
-        }
+    .btn-add {
+        display: inline-block;
+        margin-bottom: 20px;
+    }
 
-        .cover-img {
-            border-radius: 6px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.15);
-            object-fit: cover;
-        }
+    .cover-img {
+        border-radius: 6px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.15);
+        object-fit: cover;
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        }
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
 
-        td, th {
-            vertical-align: middle !important;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Danh Sách Sách</h2>
-            @Html.ActionLink("Thêm sách mới", "Create", "Book", null, new { @class = "btn btn-success btn-lg shadow-sm" })
-        </div>
+    td, th {
+        vertical-align: middle !important;
+        text-align: center;
+    }
+</style>
 
-        @using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "d-flex align-items-center flex-wrap mb-3" }))// xử lí lại. khii loda vẫm còn
-        {
-            @Html.Label("search", "", new { @class = "me-2" })
-            @Html.TextBox("search", ViewBag.Search as string, new { @class = "form-control me-2 w-auto", placeholder = "Nhập tên sách..." })
-            <button type="submit" class="btn btn-primary">Tìm</button>
-        }
-
-        @using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "d-flex mb-3" }))
-        {
-            @Html.Label("SortBy", "", new { @class = "me-2" })
-            @Html.DropDownList("SortBy",
-                new List<SelectListItem>
-                {
-                    new SelectListItem { Text = "--- hãy chọn ---", Value = "" },
-                    new SelectListItem { Text = "Tên Sách", Value = "Name" },
-                    new SelectListItem { Text = "Giá Sách", Value = "Price" },
-                    new SelectListItem { Text = "Ngày", Value = "PublicationDate" }
-                },
-                new { @class = "form-select me-2 w-auto", onchange = "this.form.submit();" })
-        }
-
-        @if (TempData["Message"] != null)
-        {
-            <div class="alert alert-warning">
-                @TempData["Message"]
-                @if (Session["DeletedBooks"] != null)
-                {
-                    <a href="@Url.Action("UndoDelete", "Book")" class="btn btn-warning">Hoàn tác</a>
-                }
-            </div>
-        }
-
-        @using (Html.BeginForm("DeleteSelected", "Book", FormMethod.Post))
-        {
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th style="width:40px;"> <input type="checkbox" id="selectAll" /> Chọn</th> <!-- Ô chọn cho mỗi dòng -->
-                        <th>
-                            @Html.ActionLink(
-                                "ID",
-                                "Index",
-                                new
-                                     {
-                                    SortBy = (ViewBag.CurrentSort as string) == "IdAsc" ? "IdDesc" : "IdAsc",
-                                    search = ViewBag.Search,
-                                    page = ViewBag.CurrentPage
-                                })
-                        </th>
-                        <th>Tên sách</th>
-                        <th>Ngày xuất bản</th>
-                        <th>Giá</th>
-                        <th>Ảnh bìa</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
-                            <tr>
-                                <td><input type="checkbox" name="selectedBooks" value="@item.Id" /></td> 
-                                <td>@item.Id</td>
-                                <td>
-                                    @Html.ActionLink(
-                                        linkText: item.Name,
-                                        actionName: "Details",
-                                        routeValues: new { id = item.Id },
-                                        htmlAttributes: new { @class = "link-primary fw-semibold text-decoration-none" }
-                                    )
-                                </td>
-                                <td>@Html.DisplayFor(m => item.PublicationDate)</td>
-                                <td class="text-danger fw-bold">@Html.DisplayFor(_ => item.Price)</td>
-                                <td>
-                                    @{
-                                        // Nếu chưa có ảnh thì dùng ảnh mặc định
-                                        var rawUrl = string.IsNullOrWhiteSpace(item.CoverImageUrl)
-                                            ? "~/Images/anhmacdinh.jpg"
-                                            : item.CoverImageUrl;
-
-                                        var isDefault = rawUrl.EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
-
-                                        // Đường dẫn đã qua Url.Content
-                                        var resolvedUrl = Url.Content(rawUrl);
-
-                                        string imgSrc;
-                                        if (isDefault)
-                                        {
-                                            // Ảnh mặc định: không cần ?v
-                                            imgSrc = resolvedUrl;
-                                        }
-                                        else
-                                        {
-                                            // Ảnh riêng: thêm ?v= theo tên file để cache-busting
-                                            var fileKey = System.IO.Path.GetFileNameWithoutExtension(rawUrl) ?? "";
-                                            imgSrc = string.IsNullOrEmpty(fileKey)
-                                                ? resolvedUrl       // phòng hờ, vẫn tránh lỗi
-                                                : $"{resolvedUrl}?v={fileKey}";
-                                        }
-                                    }
-
-                                    @*<img src="@imgSrc" class="img-thumbnail" style="max-width: 80px; max-height: 100px;" />*@
-                                    <img src="@imgSrc" class="cover-img" width="120" height="170" alt="Ảnh bìa" />
-                                </td>
-
-                                <td>
-                                    <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-warning btn-sm me-1">Sửa</a>
-                                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Xóa</a>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">Không có sách nào trong danh sách</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-danger">Xóa đã chọn</button>   
-            </div>
-        }
-
-
-
-
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                @if (ViewBag.CurrentPage == 1)
-                {
-                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
-                }
-                else
-                {
-                    <li class="page-item">
-                        @Html.ActionLink("Previous", "Index", new
-                        {
-                            page = ViewBag.CurrentPage - 1,
-                            search = ViewBag.Search,
-                            SortBy = ViewBag.SortBy
-                        }, new { @class = "page-link" })
-                    </li>
-                }
-
-                @for (int i = 1; i <= ViewBag.TotalPage; i++)
-                {
-                    if (i == ViewBag.CurrentPage)
-                    {
-                        <li class="page-item active">
-                            @Html.ActionLink(i.ToString(), "Index", new
-                            {
-                                page = i,
-                                search = ViewBag.Search,
-                                SortBy = ViewBag.SortBy
-                            }, new { @class = "page-link" })
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="page-item">
-                            @Html.ActionLink(i.ToString(), "Index", new
-                            {
-                                page = i,
-                                search = ViewBag.Search,
-                                SortBy = ViewBag.SortBy
-                            }, new { @class = "page-link" })
-                        </li>
-                    }
-                }
-
-                @if (ViewBag.CurrentPage == ViewBag.TotalPage)
-                {
-                    <li class="page-item disabled"><a class="page-link">Next</a></li>
-                }
-                else
-                {
-                    <li class="page-item">
-                        @Html.ActionLink("Next", "Index", new
-                        {
-                            page = ViewBag.CurrentPage + 1,
-                            search = ViewBag.Search,
-                            SortBy = ViewBag.SortBy
-                        }, new { @class = "page-link" })
-                    </li>
-                }
-            </ul>
-        </nav>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Danh Sách Sách</h2>
+        @Html.ActionLink("Thêm sách mới", "Create", "Book", null, new { @class = "btn btn-success btn-lg shadow-sm" })
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+   
+
+    @using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "d-flex mb-3" }))
+    {
+        @Html.Label("SortBy", "", new { @class = "me-2" })
+        @Html.DropDownList("SortBy",
+            new List<SelectListItem>
+            {
+                new SelectListItem { Text = "--- hãy chọn ---", Value = "" },
+                new SelectListItem { Text = "Tên Sách", Value = "Name" },
+                new SelectListItem { Text = "Giá Sách", Value = "Price" },
+                new SelectListItem { Text = "Ngày", Value = "PublicationDate" }
+            },
+            new { @class = "form-select me-2 w-auto", onchange = "this.form.submit();" })
+    }
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Message"]
+            @if (Session["DeletedBooks"] != null)
+            {
+                <a href="@Url.Action("UndoDelete", "Book")" class="btn btn-warning">Hoàn tác</a>
+            }
+        </div>
+    }
+
+    @using (Html.BeginForm("DeleteSelected", "Book", FormMethod.Post))
+    {
+        <table class="table table-bordered table-hover align-middle">
+            <thead>
+                <tr>
+                    <th style="width:40px;"> <input type="checkbox" id="selectAll" /> Chọn</th> <!-- Ô chọn cho mỗi dòng -->
+                    <th>
+                        @Html.ActionLink(
+                            "ID",
+                            "Index",
+                            new
+                                 {
+                                SortBy = (ViewBag.CurrentSort as string) == "IdAsc" ? "IdDesc" : "IdAsc",
+                                search = ViewBag.Search,
+                                page = ViewBag.CurrentPage
+                            })
+                    </th>
+                    <th>Tên sách</th>
+                    <th>Ngày xuất bản</th>
+                    <th>Giá</th>
+                    <th>Ảnh bìa</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="selectedBooks" value="@item.Id" /></td>
+                            <td>@item.Id</td>
+                            <td>
+                                @Html.ActionLink(
+                                    linkText: item.Name,
+                                    actionName: "Details",
+                                    routeValues: new { id = item.Id },
+                                    htmlAttributes: new { @class = "link-primary fw-semibold text-decoration-none" }
+                                )
+                            </td>
+                            <td>@Html.DisplayFor(m => item.PublicationDate)</td>
+                            <td class="text-danger fw-bold">@Html.DisplayFor(_ => item.Price)</td>
+                            <td>
+                                @{
+                                    // Nếu chưa có ảnh thì dùng ảnh mặc định
+                                    var rawUrl = string.IsNullOrWhiteSpace(item.CoverImageUrl)
+                                        ? "~/Images/anhmacdinh.jpg"
+                                        : item.CoverImageUrl;
+
+                                    var isDefault = rawUrl.EndsWith("/anhmacdinh.jpg", StringComparison.OrdinalIgnoreCase);
+
+                                    // Đường dẫn đã qua Url.Content
+                                    var resolvedUrl = Url.Content(rawUrl);
+
+                                    string imgSrc;
+                                    if (isDefault)
+                                    {
+                                        // Ảnh mặc định: không cần ?v
+                                        imgSrc = resolvedUrl;
+                                    }
+                                    else
+                                    {
+                                        // Ảnh riêng: thêm ?v= theo tên file để cache-busting
+                                        var fileKey = System.IO.Path.GetFileNameWithoutExtension(rawUrl) ?? "";
+                                        imgSrc = string.IsNullOrEmpty(fileKey)
+                                            ? resolvedUrl       // phòng hờ, vẫn tránh lỗi
+                                            : $"{resolvedUrl}?v={fileKey}";
+                                    }
+                                }
+
+                                @*<img src="@imgSrc" class="img-thumbnail" style="max-width: 80px; max-height: 100px;" />*@
+                                <img src="@imgSrc" class="cover-img" width="120" height="170" alt="Ảnh bìa" />
+                            </td>
+
+                            <td>
+                                <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-warning btn-sm me-1">Sửa</a>
+                                <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">Không có sách nào trong danh sách</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-danger">Xóa đã chọn</button>
+        </div>
+    }
+
+
+
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (ViewBag.CurrentPage == 1)
+            {
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @Html.ActionLink("Previous", "Index", new
+                    {
+                        page = ViewBag.CurrentPage - 1,
+                        search = ViewBag.Search,
+                        SortBy = ViewBag.SortBy
+                    }, new { @class = "page-link" })
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPage; i++)
+            {
+                if (i == ViewBag.CurrentPage)
+                {
+                    <li class="page-item active">
+                        @Html.ActionLink(i.ToString(), "Index", new
+                        {
+                            page = i,
+                            search = ViewBag.Search,
+                            SortBy = ViewBag.SortBy
+                        }, new { @class = "page-link" })
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        @Html.ActionLink(i.ToString(), "Index", new
+                        {
+                            page = i,
+                            search = ViewBag.Search,
+                            SortBy = ViewBag.SortBy
+                        }, new { @class = "page-link" })
+                    </li>
+                }
+            }
+
+            @if (ViewBag.CurrentPage == ViewBag.TotalPage)
+            {
+                <li class="page-item disabled"><a class="page-link">Next</a></li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @Html.ActionLink("Next", "Index", new
+                    {
+                        page = ViewBag.CurrentPage + 1,
+                        search = ViewBag.Search,
+                        SortBy = ViewBag.SortBy
+                    }, new { @class = "page-link" })
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+

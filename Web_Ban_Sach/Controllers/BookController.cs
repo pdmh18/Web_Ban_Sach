@@ -201,7 +201,9 @@ namespace Web_Ban_Sach.Controllers
                 // GÁN NAVIGATION LUÔN, để view đọc được .Name
                 Genre = genre,
                 Supplier = supplier,
-                Editor = editor
+                Editor = editor,
+
+                TempAuthorName = model.AuthorName?.Trim()
             };
 
             var pending = GetPendingBooks();
@@ -230,8 +232,37 @@ namespace Web_Ban_Sach.Controllers
                 b.Editor = null;
                 db.Book.Add(b);
             }
-
+            foreach(var b in pending)
+            {
+                db.Book.Add(b);
+            }
             db.SaveChanges();
+
+            foreach(var b in pending) // xử lí author + bookauthor
+            {
+               
+                if(string.IsNullOrWhiteSpace(b.TempAuthorName))
+                    continue;
+                var author = new Author
+                {
+                    Name = b.TempAuthorName.Trim(),
+                    // chỉ nhập tên, mấy field khác  set tạm (hoặc sau này sửa model Author cho mềm hơn)
+                    Bio = "Đang cập nhật...",
+                    Nationality = "Đang cập nhật...",
+                    BirthDate = new DateTime(1900, 1, 1)
+                };
+                db.Author.Add(author);
+                db.SaveChanges();
+
+                var link = new BookAuthor // nổi author anh sách
+                {
+                    BookId = b.Id,
+                    AuthorId = author.Id
+                };
+                db.BookAuthor.Add(link);
+                db.SaveChanges();
+            }
+            
             Session[PendingBooksSessionKey] = null;
 
             return RedirectToAction("Index");
@@ -268,6 +299,10 @@ namespace Web_Ban_Sach.Controllers
             var b = db.Book.FirstOrDefault(x => x.Id == id);
             if (b == null) return HttpNotFound();
 
+            var authorName = db.BookAuthor
+                               .Where(ba => ba.BookId == b.Id)
+                               .Select(ba => ba.Author.Name)
+                               .FirstOrDefault();
             var dto = new BookDto
             {
                 Name = b.Name,
@@ -278,7 +313,8 @@ namespace Web_Ban_Sach.Controllers
                 Price = b.Price,
                 GenreId = b.genreId,
                 SupplierId = b.supplierId,
-                EditorId = b.EditorId
+                EditorId = b.EditorId,
+                AuthorName = authorName
             };
             ViewBag.Genres = db.Genre.ToList();
             ViewBag.Suppliers = db.Supplier.ToList();
@@ -356,6 +392,22 @@ namespace Web_Ban_Sach.Controllers
             book.EditorId = model.EditorId.GetValueOrDefault();
 
             db.SaveChanges();
+
+            var newAuthorName = model.AuthorName?.Trim();
+            if (!string.IsNullOrWhiteSpace(newAuthorName))
+            {
+                var author = db.BookAuthor
+                               .Where(ba => ba.BookId == id)
+                               .Select(ba => ba.Author)
+                               .FirstOrDefault();
+
+                if (author != null)
+                {
+                    author.Name = newAuthorName;
+                    db.SaveChanges();
+                }
+            }
+
             return RedirectToAction("Index");
         }
 

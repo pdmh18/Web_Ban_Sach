@@ -148,8 +148,20 @@
     <Compile Include="Migrations\202511151831422_UpdateBookDTOModel.Designer.cs">
       <DependentUpon>202511151831422_UpdateBookDTOModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202511210618240_AddAuthorAndBookAuthor.cs" />
+    <Compile Include="Migrations\202511210618240_AddAuthorAndBookAuthor.Designer.cs">
+      <DependentUpon>202511210618240_AddAuthorAndBookAuthor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202511210658586_addthuoctinhobook.cs" />
+    <Compile Include="Migrations\202511210658586_addthuoctinhobook.Designer.cs">
+      <DependentUpon>202511210658586_addthuoctinhobook.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Author.cs" />
+    <Compile Include="Models\AuthorDto.cs" />
     <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\BookAuthor.cs" />
+    <Compile Include="Models\BookAuthorDto.cs" />
     <Compile Include="Models\BookDto.cs" />
     <Compile Include="Models\Books.cs" />
     <Compile Include="Models\Editor.cs" />
@@ -163,8 +175,6 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
-    <Content Include="Views\Book\Index.cshtml" />
-    <Content Include="Views\Book\Create.cshtml" />
     <Content Include="Views\Book\Update.cshtml" />
     <Content Include="Views\Book\Delete.cshtml" />
     <Content Include="Views\Book\PendingBooks.cshtml" />
@@ -184,6 +194,9 @@
     <Content Include="Views\Editor\Edit.cshtml" />
     <Content Include="Views\Editor\Delete.cshtml" />
     <Content Include="Views\Book\_PendingBooksTable.cshtml" />
+    <Content Include="Views\Shared\_LayoutPage1.cshtml" />
+    <Content Include="Views\Book\Index.cshtml" />
+    <Content Include="Views\Book\Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -215,6 +228,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202511151831422_UpdateBookDTOModel.resx">
       <DependentUpon>202511151831422_UpdateBookDTOModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511210618240_AddAuthorAndBookAuthor.resx">
+      <DependentUpon>202511210618240_AddAuthorAndBookAuthor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511210658586_addthuoctinhobook.resx">
+      <DependentUpon>202511210658586_addthuoctinhobook.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

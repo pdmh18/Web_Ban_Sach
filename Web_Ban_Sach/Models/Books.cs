@@ -16,5 +16,7 @@ namespace Web_Ban_Sach.Models
         public DbSet<Supplier> Supplier { get; set; }
         public DbSet<Editor> Editor { get; set; }
 
+        public DbSet<Author> Author { get; set; }
+        public DbSet<BookAuthor> BookAuthor { get; set; }
     }
 }

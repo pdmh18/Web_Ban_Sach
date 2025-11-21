@@ -75,5 +75,17 @@ namespace Web_Ban_Sach.Models
         public int? EditorId { get; set; }
         [ForeignKey(nameof(EditorId))]
         public virtual Editor Editor { get; set; }
+
+
+
+        
+
+
+
+        public virtual ICollection<BookAuthor> BookAuthors { get; set; }
+
+        // DÙNG RIÊNG CHO PENDING (không map xuống DB)
+        [NotMapped]
+        public string TempAuthorName { get; set; }
     }
 }

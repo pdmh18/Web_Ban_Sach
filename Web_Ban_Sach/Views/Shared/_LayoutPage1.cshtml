@@ -1,13 +1,170 @@
 ﻿<!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        :root {
+            --green: #62b93b;
+            --green-dark: #49a527;
+        }
+
+        .dh-header-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            padding: 20px 60px;
+        }
+
+        .dh-logo {
+            height: 100px;
+        }
+
+        /* Search */
+        .dh-search {
+            display: flex;
+            align-items: center;
+            max-width: 100%;
+        }
+
+        .dh-search-input {
+            flex: 1;
+            height: 55px;
+            border-radius: 999px 0 0 999px;
+            border: 1px solid var(--green);
+            border-right: none;
+            padding: 0 16px;
+        }
+
+        .dh-search-btn {
+            height: 55px;
+            padding: 0 24px;
+            border-radius: 0 999px 999px 0;
+            background: var(--green);
+            border: 1px solid var(--green);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .dh-header-actions a {
+            color: #2563eb;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+            .dh-header-actions a:hover {
+                text-decoration: underline;
+            }
+
+        .d1 div {
+            font-size: 20px;
+        }
+
+        .nav-link {
+            font-size: 20px;
+        }
+    </style>
 </head>
+
 <body>
+    <header class="dh-header">
+        <div class="container-fluid px-0">
+            <div class="dh-header-card">
+
+                <!-- Header hàng 1 -->
+                <div class="row align-items-center">
+
+                    <!-- Logo -->
+                    <div class="col-md-4 d-flex align-items-center mb-3 mb-md-0">
+                        <a href="@Url.Action("Index","Home")">
+                            <img src="https://theme.hstatic.net/1000237375/1000756917/14/logo.png?v=1838"
+                                 class="dh-logo" />
+                        </a>
+                    </div>
+
+                    <div class="col-12 col-md-8">
+
+                        <!-- Row chứa HN và HCM -->
+                        <div class="row small">
+                            <div class="d1 col-md-6">
+                                <div class="fw-semibold">Hà Nội:</div>
+                                <div>Điện thoại: 024.73007.008 - 093.4647.172</div>
+                                <div>Địa chỉ: Số 63/445 Lạc Long Quân, Tây Hồ, Hà Nội</div>
+                                <div>Email: <a href="mailto:hn@dienhoa24gio.com">hn@dienhoa24gio.com</a></div>
+                            </div>
+
+                            <div class="d1 col-md-6">
+                                <div class="fw-semibold">TP.Hồ Chí Minh:</div>
+                                <div>Điện thoại: 028.73007.008 - 094.77723.444</div>
+                                <div>Địa chỉ: 189 XvNT, P.17, Q.Bình Thạnh</div>
+                                <div>Email: <a href="mailto:hcm@dienhoa24gio.com">hcm@dienhoa24gio.com</a></div>
+                            </div>
+                        </div>
+
+                        <!-- Actions nằm dưới HCM -->
+                        <div class="mt-3 d-flex justify-content-md-end justify-content-start" style="margin-right: 100px">
+                            <div class="dh-header-actions d-flex gap-4">
+                                <a href="#"><i class="fa-regular fa-clock"></i> Tra cứu đơn</a>
+                                <a href="#"><i class="fa-solid fa-cart-shopping"></i> Giỏ hàng</a>
+                                <a href="#"><i class="fa-regular fa-user"></i> Tài khoản</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mt-3">
+            <div class="container-fluid gap-4" style="margin-left:150px; margin-right:75px">
+
+                <a class="navbar-brand" href="@Url.Action("Index", "Book")">
+                    <i class="fa-solid fa-book" style="font-size:50px; color:lawngreen"></i>
+                </a>
+
+                <div class="collapse navbar-collapse show">
+
+                    <ul class="navbar-nav me-auto gap-4">
+                        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Đăng Nhập</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Đăng Ký</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Liên Hệ</a></li>
+                    </ul>
+
+                    <!-- Search navbar -->
+                    <div class="col-md-4 d-flex justify-content-center">
+                        @using (Html.BeginForm("Index", "Book", FormMethod.Get, new { @class = "dh-search w-100" }))
+                        {
+                            @Html.TextBox("search",
+                                ViewBag.Search as string,
+                                new
+                                {
+                                    @class = "dh-search-input w-100",
+                                    placeholder = "Nhập tên sách..."
+                                })
+
+                            <button type="submit" class="dh-search-btn">Tìm</button>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+        </nav>
+
+    </header>
+
     <div>
         @RenderBody()
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

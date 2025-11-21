@@ -86,6 +86,16 @@ namespace Web_Ban_Sach.Models
         public int? EditorId { get; set; } // Phiên bản sách
         public virtual Editor Editor { get; set; } // Liên kết với Editor
 
+
+        [Required(ErrorMessage = "Vui lòng nhập tên tác giả")]
+        [StringLength(200)]
+        [Display(Name = "Tác giả")]
+        public string AuthorName { get; set; } // ten tac gia
+
+
+
+
+
         public string SaveImage(string serverPath)
         {
             if (ImageFile == null || ImageFile.ContentLength <= 0)
